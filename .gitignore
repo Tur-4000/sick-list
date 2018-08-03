@@ -1,8 +1,10 @@
 # Byte-compiled / optimized / DLL files
 __pycache__/
-venv/
+.vscode/
 *.py[cod]
 *$py.class
+*.code-workspace
+messages.pot
 
 # C extensions
 *.so
