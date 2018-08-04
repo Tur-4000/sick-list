@@ -2,6 +2,7 @@
 
 {% block app_content %}
     <h1>График совместных осмотров</h1>
+    <p><a href="#">Добавить больничный лист</a></p>
     <table class="table table-condensed">
         <thead>
             <tr>
@@ -15,6 +16,17 @@
             </tr>
         </thead>
         <tbody>
+            {% for list in sicklists %}
+            <tr>
+                <td>{{ Lists.sick_list_number }}</td>
+                <td>{{ Lists.patient }}</td>
+                <td>{{ Lists.doctor }}</td>
+                <td>{{ Lists.start_date }}</td>
+                <td>{{ Lists.status }}</td>
+                <td>{{ Lists.diacrisis }}</td>
+                <td>{{ Lists.end_date }}</td>
+            </tr>
+            {% endfor %}
             <tr class="success">
                 <td>0001</td>
                 <td>Иванов</td>

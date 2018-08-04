@@ -2,7 +2,7 @@ from flask import render_template, flash, redirect, url_for, request
 from app import app, db
 from app.forms import LoginForm, RegistrationForm, EditProfileForm
 from flask_login import current_user, login_user, logout_user, login_required
-from app.models import Doctors
+from app.models import Doctors, Patients, Lists
 from werkzeug.urls import url_parse
 from datetime import datetime
 
@@ -17,7 +17,8 @@ def before_request():
 @app.route('/index', methods=['GET', 'POST'])
 @login_required
 def index():
-    return render_template('index.html', title='Главная')
+    sicklists = Lists.query.order_by(Lists.start_date).all()
+    return render_template('index.html', title='Главная', sicklists=sicklists)
 
 
 @app.route('/login', methods=['GET', 'POST'])
