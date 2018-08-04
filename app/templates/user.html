@@ -6,8 +6,12 @@
     {% if user.last_visit %}<p>Последне посещение: {{ user.last_visit }}</p>{% endif %}
     <hr>
     <p>
-        Ф.И.О.: {{ user.last_name }} {{ user.first_name }} {{ user.middle_name }}<br>
-        email: {{ user.email }}
+        <b>Ф.И.О.:</b> {{ user.last_name }} {{ user.first_name }} {{ user.middle_name }}<br>
+        <b>Должность:</b> {{ user.job_title }}<br>
+        <b>email:</b> {{ user.email }}
     </p>
+    {% if user == current_user %}
+    <p><a href="{{ url_for('edit_profile') }}">Редактировать профиль</a></p>
+    {% endif %}
     
 {% endblock %}

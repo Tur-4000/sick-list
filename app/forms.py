@@ -26,3 +26,13 @@ class RegistrationForm(FlaskForm):
         user = Doctors.query.filter_by(email=email.data).first()
         if user is not None:
             raise ValidationError('Пожалуйста, используйте другой email')
+
+
+class EditProfileForm(FlaskForm):
+    username = StringField('Имя пользователя')
+    email = StringField('eMail')
+    lastname = StringField('Фамилия')
+    firstname = StringField('Имя')
+    middlename = StringField('Отчество')
+    jobtitle = StringField('Должность')
+    submit = SubmitField('Сохранить')
