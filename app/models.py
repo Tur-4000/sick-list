@@ -19,6 +19,7 @@ class Doctors(UserMixin, db.Model):
     first_name = db.Column(db.String(64))
     middle_name = db.Column(db.String(64))
     job_title = db.Column(db.String(254))
+    last_visit = db.Column(db.DateTime, default=datetime.utcnow)
     sick_lists = db.relationship('Lists', backref='doctor', lazy='dynamic')
 
     def __repr__(self):

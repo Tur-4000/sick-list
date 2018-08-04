@@ -1,6 +1,6 @@
 from flask import render_template, flash, redirect, url_for, request
-from app import app
-from app.forms import LoginForm
+from app import app, db
+from app.forms import LoginForm, RegistrationForm
 from flask_login import current_user, login_user, logout_user, login_required
 from app.models import Doctors
 from werkzeug.urls import url_parse
@@ -34,3 +34,24 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('index'))
+
+
+@app.route('/register', methods=['GET', 'POST'])
+@login_required
+def register():
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        user = Doctors(username=form.username.data, email=form.email.data)
+        user.set_password(form.password.data)
+        db.session.add(user)
+        db.session.commit()
+        flash('Пользователь {} добавлен'.format(form.username.data))
+        return redirect(url_for('register'))
+    return render_template('register.html', title='Регистрация', form=form)
+
+
+@app.route('/user/<username>')
+@login_required
+def user(username):
+    user = Doctors.query.filter_by(username=username).first_or_404()
+    return render_template('user.html', user=user)
