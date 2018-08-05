@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField
 from wtforms.validators import DataRequired, ValidationError, Email, EqualTo
-from app.models import Doctors
+from app.models import User
 
 class LoginForm(FlaskForm):
     username = StringField('Имя пользователя', validators=[DataRequired()])
@@ -18,12 +18,12 @@ class RegistrationForm(FlaskForm):
     submit = SubmitField('Добавить')
 
     def validate_username(self, username):
-        user = Doctors.query.filter_by(username=username.data).first()
+        user = User.query.filter_by(username=username.data).first()
         if user is not None:
             raise ValidationError('Пожалуйста, используйте другое имя пользователя')
 
     def validate_email(self, email):
-        user = Doctors.query.filter_by(email=email.data).first()
+        user = User.query.filter_by(email=email.data).first()
         if user is not None:
             raise ValidationError('Пожалуйста, используйте другой email')
 
@@ -31,8 +31,4 @@ class RegistrationForm(FlaskForm):
 class EditProfileForm(FlaskForm):
     username = StringField('Имя пользователя')
     email = StringField('eMail')
-    lastname = StringField('Фамилия')
-    firstname = StringField('Имя')
-    middlename = StringField('Отчество')
-    jobtitle = StringField('Должность')
     submit = SubmitField('Сохранить')

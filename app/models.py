@@ -7,29 +7,36 @@ from app import login
 
 @login.user_loader
 def load_user(id):
-    return Doctors.query.get(int(id))
+    return User.query.get(int(id))
 
-
-class Doctors(UserMixin, db.Model):
+class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username =db.Column(db.String(64), index=True, unique=True)
     email = db.Column(db.String(120), index=True, unique=True)
     password_hash = db.Column(db.String(128))
-    last_name = db.Column(db.String(64))
-    first_name = db.Column(db.String(64))
-    middle_name = db.Column(db.String(64))
-    job_title = db.Column(db.String(254))
     last_visit = db.Column(db.DateTime, default=datetime.utcnow)
-    sick_lists = db.relationship('Lists', backref='doctor', lazy='dynamic')
+    employe_id = db.Column(db.Integer, db.ForeignKey('employes.id'))
 
     def __repr__(self):
-        return '<Доктор {}>'.format(self.username)
-
+        return '<Пользователь {}>'.format(self.username)
+    
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+
+class Employes(UserMixin, db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    last_name = db.Column(db.String(64))
+    first_name = db.Column(db.String(64))
+    middle_name = db.Column(db.String(64))
+    job_title = db.Column(db.String(254))
+    user = db.relationship('User', backref='user', lazy='dynamic')
+
+    def __repr__(self):
+        return '<Сотрудник {}>'.format(self.username)
 
 
 class Patients(db.Model):
@@ -53,7 +60,7 @@ class Lists(db.Model):
     status = db.Column(db.String(32))
     diacrisis = db.Column(db.String(255))
     patient_id = db.Column(db.Integer, db.ForeignKey('patients.id'))
-    doctor_id = db.Column(db.Integer, db.ForeignKey('doctors.id'))
+    doctor_id = db.Column(db.Integer, db.ForeignKey('employes.id'))
 
     def __repr__(self):
         return '<Больничный лист № {}>'.format(self.sick_list_number)

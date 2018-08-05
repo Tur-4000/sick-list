@@ -2,7 +2,7 @@ from flask import render_template, flash, redirect, url_for, request
 from app import app, db
 from app.forms import LoginForm, RegistrationForm, EditProfileForm
 from flask_login import current_user, login_user, logout_user, login_required
-from app.models import Doctors, Patients, Lists
+from app.models import User, Patients, Lists, Employes
 from werkzeug.urls import url_parse
 from datetime import datetime
 
@@ -27,7 +27,7 @@ def login():
         return redirect(url_for('index'))
     form = LoginForm()
     if form.validate_on_submit():
-        user = Doctors.query.filter_by(username=form.username.data).first()
+        user = User.query.filter_by(username=form.username.data).first()
         if user is None or not user.check_password(form.password.data):
             flash('Неправильное имя или пароль')
             return redirect(url_for('login'))
@@ -52,7 +52,7 @@ def register():
         return redirect(url_for('index'))
     form = RegistrationForm()
     if form.validate_on_submit():
-        user = Doctors(username=form.username.data, email=form.email.data)
+        user = User(username=form.username.data, email=form.email.data)
         user.set_password(form.password.data)
         db.session.add(user)
         db.session.commit()
@@ -64,7 +64,7 @@ def register():
 @app.route('/user/<username>')
 @login_required
 def user(username):
-    user = Doctors.query.filter_by(username=username).first_or_404()
+    user = User.query.filter_by(username=username).first_or_404()
     return render_template('user.html', user=user)
 
 
@@ -75,18 +75,10 @@ def edit_profile():
     if form.validate_on_submit():
         current_user.username = form.username.data
         current_user.email = form.email.data
-        current_user.last_name = form.lastname.data
-        current_user.first_name = form.firstname.data
-        current_user.middle_name = form.middlename.data
-        current_user.job_title = form.jobtitle.data
         db.session.commit()
         flash('Изменения сохранены')
         return redirect(url_for('edit_profile'))
     elif request.method == 'GET':
         form.username.data = current_user.username
         form.email.data = current_user.email
-        form.lastname.data = current_user.last_name
-        form.firstname.data = current_user.first_name
-        form.middlename.data = current_user.middle_name
-        form.jobtitle.data = current_user.job_title
     return render_template('edit_profile.html', title='Редактирование профиля', form=form)
