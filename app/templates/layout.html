@@ -26,13 +26,12 @@
                         <ul class="dropdown-menu">
                             {% if current_user.is_anonymous %}
                             <li><a href="{{ url_for('login') }}">Войти</a></li>
-                            {% elif current_user.username == 'Tur' %}
-                            <li><a href="{{ url_for('register') }}">Добавить пользователя</a></li>
-                            <li role="separator" class="divider"></li>
-                            <li><a href="{{ url_for('user', username=current_user.username) }}">Профиль</a></li>
-                            <li><a href="{{ url_for('logout') }}">Выйти</a></li>
                             {% else %}
+                                {% if  current_user.username == 'Tur' %}
+                                <li><a href="{{ url_for('register') }}">Добавить пользователя</a></li>
+                                {% endif %}
                             <li><a href="{{ url_for('user', username=current_user.username) }}">Профиль</a></li>
+                            <li role="separator" class="divider"></li>
                             <li><a href="{{ url_for('logout') }}">Выйти</a></li>
                             {% endif %}
                         </ul>
