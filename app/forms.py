@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, HiddenField, SelectField
 from wtforms.validators import DataRequired, ValidationError, Email, EqualTo
-from app.models import User
+from app.models import User, Employes
 
 class LoginForm(FlaskForm):
     username = StringField('Имя пользователя', validators=[DataRequired()])
@@ -31,4 +31,27 @@ class RegistrationForm(FlaskForm):
 class EditProfileForm(FlaskForm):
     username = StringField('Имя пользователя')
     email = StringField('eMail')
+    employe = SelectField('Сотрудник', choices=[(e.id, (e.last_name, e.first_name, e.middle_name))
+                                                for e in Employes.query.order_by('last_name')], coerce=int)
+    submit = SubmitField('Сохранить')
+
+    # def edit_user(requeat, id):
+    #     user = User.query.get(id)
+    #     form = EditProfileForm(request.POST, obj=user)
+    #     form.employe.choices = [(e.id, (e.last_name, e.first_name, e.middle_name))
+    #                             for e in Employes.query.order_by('last_name')]
+
+class AddEmployeForm(FlaskForm):
+    last_name = StringField('Фамилия', validators=[DataRequired()])
+    first_name = StringField('Имя', validators=[DataRequired()])
+    middle_name = StringField('Отчество')
+    job_title = StringField('Должность', validators=[DataRequired()])
+    submit = SubmitField('Сохранить')
+
+class EditEmployeForm(FlaskForm):
+    id = HiddenField('id')
+    last_name = StringField('Имя')
+    first_name = StringField('Фамилия')
+    middle_name = StringField('Отчество')
+    job_title = StringField('Должность')
     submit = SubmitField('Сохранить')

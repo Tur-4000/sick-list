@@ -1,0 +1,26 @@
+{% extends "layout.html" %}
+
+{% block app_content %}
+    <h1>Справочник сотрудников</h1>
+    <p><a href="{{ url_for('add_employe') }}">Добавить сотрудника</a></p>
+    <table class="table table-condensed table-striped">
+        <thead>
+            <tr>
+                <th></th>
+                <th>Ф.И.О.</th>
+                <th>Должность</th>
+                <th>Пользователь</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for employe in employes %}
+            <tr>
+                <td><a href="{{ url_for('edit_employe', id = employe.id) }}">x</a></td>
+                <td>{{ employe.last_name }} {{ employe.first_name }} {{ employe.middle_name }}</td>
+                <td>{{ employe.job_title }}</td>
+                <td> - </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
