@@ -21,7 +21,9 @@
                 </td>
                 <td>{{ employe.last_name }} {{ employe.first_name }} {{ employe.middle_name }}</td>
                 <td>{{ employe.job_title }}</td>
-                <td> - </td>
+                <td>
+                    {{ employe.username }}
+                </td>
             </tr>
             {% endfor %}
         </tbody>

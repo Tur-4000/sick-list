@@ -36,7 +36,7 @@
                             <li><a href="{{ url_for('login') }}">Войти</a></li>
                             {% else %}
                                 {% if  current_user.username == 'Tur' %}
-                                <li><a href="{{ url_for('register') }}">Добавить пользователя</a></li>
+                                <li><a href="{{ url_for('list_users') }}">Пользователи</a></li>
                                 {% endif %}
                             <li><a href="{{ url_for('user', username=current_user.username) }}">Профиль</a></li>
                             <li role="separator" class="divider"></li>

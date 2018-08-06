@@ -36,7 +36,7 @@ class Employes(db.Model):
     user = db.relationship('User', backref='user', lazy='dynamic')
 
     def __repr__(self):
-        return '<Сотрудник {}>'.format(self.username)
+        return '<Сотрудник: {} {} {}>'.format(self.last_name, self.first_name, self.middle_name)
 
 
 class Patients(db.Model):

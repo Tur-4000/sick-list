@@ -70,31 +70,45 @@ def user(username):
     employe = Employes.query.filter_by(id=user.employe_id).first()
     return render_template('user.html', user=user, employe=employe)
 
+@app.route('/list_users')
+@login_required
+def list_users():
+    users = User.query.order_by(User.username).all()
+    employe = Employes.query.all()
+    return render_template('list_users.html', users=users, employe=employe)
+
 
 @app.route('/edit_profile', methods=['GET', 'POST'])
 @login_required
 def edit_profile():
     form = EditProfileForm()
+    form.employe.choices = [(e.id, e.last_name + ' ' + e.first_name + ' ' + e.middle_name) 
+                                    for e in Employes.query.order_by('last_name')]
+    #employe = Employes.query.filter_by(id=user.employe_id).first()
     if form.validate_on_submit():
         current_user.username = form.username.data
         current_user.email = form.email.data
-        current_user.employe_id = form.employe.choices
+        current_user.employe_id = request.form['employe']
         db.session.commit()
         flash('Изменения сохранены')
         return redirect(url_for('edit_profile'))
     elif request.method == 'GET':
         form.username.data = current_user.username
         form.email.data = current_user.email
-        #employes = Employes.query.get().all()
-        form.employe.choices = [(e.id, e.last_name + ' ' + e.first_name + ' ' + e.middle_name) 
-                                    for e in Employes.query.order_by('last_name')]
     return render_template('edit_profile.html', title='Редактирование профиля', form=form)
 
 
 @app.route('/list_employes')
 @login_required
 def list_employes():
-    employes = Employes.query.order_by(Employes.last_name).all()
+    employes = Employes.query.outerjoin(User, (
+                User.employe_id == Employes.id)).add_columns(
+                    Employes.last_name,
+                    Employes.first_name,
+                    Employes.middle_name,
+                    Employes.job_title,
+                    User.username).order_by(
+                        Employes.last_name).all()
     return render_template('employes.html', title='Сотрудники', employes=employes)
 
 @app.route('/add_employe', methods=['GET', 'POST'])
@@ -118,7 +132,6 @@ def edit_employe(id):
     form = EditEmployeForm()
     employe = Employes.query.filter_by(id=id).first_or_404()
     if form.validate_on_submit():
-        # TODO: доделать сохранение
         employe = Employes.query.filter_by(id=int(form.id.data)).update(
                                         {'last_name': form.last_name.data, 
                                          'first_name': form.first_name.data,
