@@ -45,8 +45,27 @@ class AddEmployeForm(FlaskForm):
 
 class EditEmployeForm(FlaskForm):
     id = HiddenField('id')
-    last_name = StringField('Имя')
-    first_name = StringField('Фамилия')
+    last_name = StringField('Фамилия')
+    first_name = StringField('Имя')
     middle_name = StringField('Отчество')
     job_title = StringField('Должность')
+    submit = SubmitField('Сохранить')
+
+
+class AddPatientForm(FlaskForm):
+    id = HiddenField('id')
+    last_name = StringField('Фамилия', validators=[DataRequired()])
+    first_name = StringField('Имя', validators=[DataRequired()])
+    middle_name = StringField('Отчество', validators=[DataRequired()])
+    birth_year = StringField('Год рождения', validators=[DataRequired()])
+    sex = SelectField('Пол', choices=[('man', 'Мужской'), ('woman', 'Женский')])
+    submit = SubmitField('Сохранить')
+
+class EditPatientForm(FlaskForm):
+    id = HiddenField('id')
+    last_name = StringField('Фамилия', validators=[DataRequired()])
+    first_name = StringField('Имя', validators=[DataRequired()])
+    middle_name = StringField('Отчество', validators=[DataRequired()])
+    birth_year = StringField('Год рождения', validators=[DataRequired()])
+    sex = SelectField('Пол', choices=[('man', 'Мужской'), ('woman', 'Женский')], coerce=str)
     submit = SubmitField('Сохранить')

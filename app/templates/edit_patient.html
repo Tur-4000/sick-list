@@ -2,11 +2,11 @@
 {% import 'bootstrap/wtf.html' as wtf %}
 
 {% block app_content %}
-    <h1>Добавить сотрудника</h1>
+    <h1>Редактировать информацию о пациенте</h1>
     <div class="row">
         <div class="col-md-4">
             {{ wtf.quick_form(form) }}
-            <br><a href="{{ url_for('list_employes') }}">Назад к списку сотрудников</a>
+            <br><a href="{{ url_for('list_patients') }}">Назад к списку пациентов</a>
         </div>
     </div>
 {% endblock %}

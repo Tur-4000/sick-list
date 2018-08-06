@@ -1,6 +1,6 @@
 from flask import render_template, flash, redirect, url_for, request
 from app import app, db
-from app.forms import LoginForm, RegistrationForm, EditProfileForm, AddEmployeForm, EditEmployeForm
+from app.forms import LoginForm, RegistrationForm, EditProfileForm, AddEmployeForm, EditEmployeForm, AddPatientForm, EditPatientForm
 from flask_login import current_user, login_user, logout_user, login_required
 from app.models import User, Patients, Lists, Employes
 from werkzeug.urls import url_parse
@@ -74,8 +74,7 @@ def user(username):
 @login_required
 def list_users():
     users = User.query.order_by(User.username).all()
-    employe = Employes.query.all()
-    return render_template('list_users.html', users=users, employe=employe)
+    return render_template('list_users.html', users=users)
 
 
 @app.route('/edit_profile', methods=['GET', 'POST'])
@@ -103,6 +102,7 @@ def edit_profile():
 def list_employes():
     employes = Employes.query.outerjoin(User, (
                 User.employe_id == Employes.id)).add_columns(
+                    Employes.id,
                     Employes.last_name,
                     Employes.first_name,
                     Employes.middle_name,
@@ -129,8 +129,8 @@ def add_employe():
 @app.route('/edit_employe/<id>', methods=['GET', 'POST'])
 @login_required
 def edit_employe(id):
-    form = EditEmployeForm()
     employe = Employes.query.filter_by(id=id).first_or_404()
+    form = EditEmployeForm()
     if form.validate_on_submit():
         employe = Employes.query.filter_by(id=int(form.id.data)).update(
                                         {'last_name': form.last_name.data, 
@@ -147,3 +147,54 @@ def edit_employe(id):
         form.middle_name.data = employe.middle_name
         form.job_title.data = employe.job_title
     return render_template('edit_employe.html', title='Редактирование сотрудника', form=form)
+
+
+@app.route('/list_patients')
+@login_required
+def list_patients():
+    patients = Patients.query.order_by(Patients.last_name).all()
+    return render_template('list_patients.html', patients=patients)
+
+@app.route('/add_patient', methods=['GET', 'POST'])
+@login_required
+def add_patient():
+    form = AddPatientForm()
+    if form.validate_on_submit():
+        patient = Patients(last_name=form.last_name.data, 
+                           first_name=form.first_name.data,
+                           middle_name=form.middle_name.data,
+                           birth_year=form.birth_year.data,
+                           sex=request.form['sex'])
+        db.session.add(patient)
+        db.session.commit()
+        flash('Пациент {} {} {} {} года рождения, добавлен'.format(
+                                    form.last_name.data, 
+                                    form.first_name.data, 
+                                    form.middle_name.data, 
+                                    form.birth_year.data))
+        return redirect(url_for('add_patient'))
+    return render_template('add_patient.html', title='Добавление пациента', form=form)
+
+@app.route('/edit_patient/<id>', methods=['GET', 'POST'])
+@login_required
+def edit_patient(id):
+    patient = Patients.query.filter_by(id=id).first_or_404()
+    form = EditPatientForm(obj=patient)
+    if form.validate_on_submit():
+        patients = Patients.query.filter_by(id=int(form.id.data)).update(
+                                        {'last_name': form.last_name.data, 
+                                         'first_name': form.first_name.data,
+                                         'middle_name': form.middle_name.data,
+                                         'birth_year': form.birth_year.data,
+                                         'sex': request.form['sex']})
+        db.session.commit()
+        flash('Изменения сохранены')
+        return redirect(url_for('edit_patient', id = form.id.data))
+    elif request.method == 'GET':
+        form.id.data = patient.id
+        form.last_name.data = patient.last_name
+        form.first_name.data = patient.first_name
+        form.middle_name.data = patient.middle_name
+        form.birth_year.data = patient.birth_year
+        form.sex.default = patient.sex
+    return render_template('edit_patient.html', form=form, patient=patient)

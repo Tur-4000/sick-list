@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+
+{% block app_content %}
+    <h1>Справочник пациентов</h1>
+    <p><a href="{{ url_for('add_patient') }}">Добавить пациента</a></p>
+    <table class="table table-condensed table-striped">
+        <thead>
+            <tr>
+                <th></th>
+                <th>Ф.И.О.</th>
+                <th>Год рождения</th>
+                <th>Пол</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for patient in patients %}
+            <tr>
+                <td><a href="{{ url_for('edit_patient', id = patient.id) }}">
+                        <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+                    </a>
+                </td>
+                <td>{{ patient.last_name }} {{ patient.first_name }} {{ patient.middle_name }}</td>
+                <td>{{ patient.birth_year }}</td>
+                <td>
+                    {% if patient.sex == 'man' %}
+                    мужской
+                    {% else %}
+                    женский
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
