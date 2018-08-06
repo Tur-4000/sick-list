@@ -13,6 +13,7 @@ class LoginForm(FlaskForm):
 class RegistrationForm(FlaskForm):
     username = StringField('Имя пользователя', validators=[DataRequired()])
     email = StringField('Email', validators=[DataRequired(), Email()])
+    employe = SelectField('Сотрудник', coerce=int)
     password = PasswordField('Пароль', validators=[DataRequired()])
     password2 = PasswordField('Повторить пароль', validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Добавить')
@@ -31,15 +32,9 @@ class RegistrationForm(FlaskForm):
 class EditProfileForm(FlaskForm):
     username = StringField('Имя пользователя')
     email = StringField('eMail')
-    employe = SelectField('Сотрудник', choices=[(e.id, (e.last_name, e.first_name, e.middle_name))
-                                                for e in Employes.query.order_by('last_name')], coerce=int)
+    employe = SelectField('Сотрудник', coerce=int)
     submit = SubmitField('Сохранить')
 
-    # def edit_user(requeat, id):
-    #     user = User.query.get(id)
-    #     form = EditProfileForm(request.POST, obj=user)
-    #     form.employe.choices = [(e.id, (e.last_name, e.first_name, e.middle_name))
-    #                             for e in Employes.query.order_by('last_name')]
 
 class AddEmployeForm(FlaskForm):
     last_name = StringField('Фамилия', validators=[DataRequired()])

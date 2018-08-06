@@ -6,7 +6,12 @@
     {% if user.last_visit %}<p>Последне посещение: {{ user.last_visit }}</p>{% endif %}
     <hr>
     <p>
-        <b>email:</b> {{ user.email }}
+        <b>email:</b> {{ user.email }}<br>
+        {% if employe %}
+        <b>Сотрудник:</b> {{ employe.last_name + " " + 
+                             employe.first_name + " " + 
+                             employe.middle_name }}
+        {% endif %}
     </p>
     {% if user == current_user %}
     <p><a href="{{ url_for('edit_profile') }}">Редактировать профиль</a></p>

@@ -51,8 +51,10 @@ def register():
     if current_user.username != 'Tur':
         return redirect(url_for('index'))
     form = RegistrationForm()
+    form.employe.choices = [(e.id, e.last_name + ' ' + e.first_name + ' ' + e.middle_name) 
+                                for e in Employes.query.order_by('last_name')]
     if form.validate_on_submit():
-        user = User(username=form.username.data, email=form.email.data)
+        user = User(username=form.username.data, email=form.email.data, employe_id = request.form['employe'])
         user.set_password(form.password.data)
         db.session.add(user)
         db.session.commit()
@@ -65,7 +67,8 @@ def register():
 @login_required
 def user(username):
     user = User.query.filter_by(username=username).first_or_404()
-    return render_template('user.html', user=user)
+    employe = Employes.query.filter_by(id=user.employe_id).first()
+    return render_template('user.html', user=user, employe=employe)
 
 
 @app.route('/edit_profile', methods=['GET', 'POST'])
@@ -75,12 +78,16 @@ def edit_profile():
     if form.validate_on_submit():
         current_user.username = form.username.data
         current_user.email = form.email.data
+        current_user.employe_id = form.employe.choices
         db.session.commit()
         flash('Изменения сохранены')
         return redirect(url_for('edit_profile'))
     elif request.method == 'GET':
         form.username.data = current_user.username
         form.email.data = current_user.email
+        #employes = Employes.query.get().all()
+        form.employe.choices = [(e.id, e.last_name + ' ' + e.first_name + ' ' + e.middle_name) 
+                                    for e in Employes.query.order_by('last_name')]
     return render_template('edit_profile.html', title='Редактирование профиля', form=form)
 
 

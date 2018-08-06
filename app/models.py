@@ -27,7 +27,7 @@ class User(UserMixin, db.Model):
         return check_password_hash(self.password_hash, password)
 
 
-class Employes(UserMixin, db.Model):
+class Employes(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     last_name = db.Column(db.String(64))
     first_name = db.Column(db.String(64))
