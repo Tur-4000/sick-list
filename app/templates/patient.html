@@ -4,10 +4,10 @@
     <h1>Пациент: {{ patient.last_name + " " + patient.first_name + " " + patient.middle_name }}</h1>    
     <hr>
     <p>
-        Год рождения: {{ patient.birth_year }}<br>
-        Пол: {{ patient.sex }}<br>
+        <b>Год рождения:</b> {{ patient.birth_year }}<br>
+        <b>Пол:</b> {% if patient.sex == 'man' %}мужской{% else %}женский{% endif %}<br>
     </p>    
-    <p><a href="#">Редактировать информацию о пациенте</a></p>
+    <p><a href="{{ url_for('edit_patient', id = patient.id) }}">Редактировать информацию о пациенте</a></p>
     <h3>Больничные листы</h3>
     <table class="table table-condensed">
         <thead>
