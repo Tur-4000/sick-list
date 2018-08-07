@@ -1,5 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, HiddenField, SelectField
+from wtforms.fields.html5 import DateField
 from wtforms.validators import DataRequired, ValidationError, Email, EqualTo
 from app.models import User, Employes
 
@@ -69,3 +70,18 @@ class EditPatientForm(FlaskForm):
     birth_year = StringField('Год рождения', validators=[DataRequired()])
     sex = SelectField('Пол', choices=[('man', 'Мужской'), ('woman', 'Женский')], coerce=str)
     submit = SubmitField('Сохранить')
+
+
+class AddSicklistForm(FlaskForm):
+    id = HiddenField('id')
+    sick_list_number = StringField('Номер больничного', validators=[DataRequired()])
+    start_date = DateField('Дата открытия', format='%Y-%m-%d', validators=[DataRequired()])
+    patient = SelectField('Пациент', coerce=int)
+    diacrisis = StringField('Диагноз', validators=[DataRequired()])
+    doctor = SelectField('Лечащий врач', coerce=int)
+    status = SelectField('Статус', choices=[('open', 'Открыт'), ('end', 'Закрыт'), ('relocated', 'перемещён')], coerce=str)
+    submit = SubmitField('Сохранить')
+    
+    
+    
+    

@@ -1,14 +1,19 @@
 {% extends "layout.html" %}
 
 {% block app_content %}
-    <h1>График совместных осмотров</h1>
-    <p><a href="{{ url_for('add_sicklist') }}">Добавить больничный лист</a></p>
+    <h1>Пациент: {{ patient.last_name + " " + patient.first_name + " " + patient.middle_name }}</h1>    
+    <hr>
+    <p>
+        Год рождения: {{ patient.birth_year }}<br>
+        Пол: {{ patient.sex }}<br>
+    </p>    
+    <p><a href="#">Редактировать информацию о пациенте</a></p>
+    <h3>Больничные листы</h3>
     <table class="table table-condensed">
         <thead>
             <tr>
                 <th></th>
                 <th>№ б/л</th>
-                <th>Пациент (ФИО)</th>
                 <th>Доктор</th>
                 <th>б/л открыт</th>
                 <th>Статус б/л</th>
@@ -17,7 +22,7 @@
             </tr>
         </thead>
         <tbody>
-            {% for list in sicklists %}
+            {% for list in patient.sick_lists %}
             <tr>
                 <td>
                     <a href="#">
@@ -25,11 +30,6 @@
                     </a>
                 </td>
                 <td>{{ list.sick_list_number }}</td>
-                <td>
-                    <a href="{{ url_for('patient', id = list.patient.id) }}">
-                    {{ list.patient.last_name + " " + list.patient.first_name + " " + list.patient.middle_name }}
-                    </a>
-                </td>
                 <td>{{ list.doctor.last_name + " " + list.doctor.first_name + " " + list.doctor.middle_name }}</td>
                 <td>{{ list.start_date }}</td>
                 <td>

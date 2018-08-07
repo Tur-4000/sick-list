@@ -1,6 +1,9 @@
 from flask import render_template, flash, redirect, url_for, request
 from app import app, db
-from app.forms import LoginForm, RegistrationForm, EditProfileForm, AddEmployeForm, EditEmployeForm, AddPatientForm, EditPatientForm
+from app.forms import LoginForm, RegistrationForm, EditProfileForm
+from app.forms import AddEmployeForm, EditEmployeForm
+from app.forms import AddPatientForm, EditPatientForm
+from app.forms import AddSicklistForm
 from flask_login import current_user, login_user, logout_user, login_required
 from app.models import User, Patients, Lists, Employes
 from werkzeug.urls import url_parse
@@ -19,6 +22,12 @@ def before_request():
 def index():
     sicklists = Lists.query.order_by(Lists.start_date).all()
     return render_template('index.html', title='Главная', sicklists=sicklists)
+
+@app.route('/all')
+@login_required
+def all():
+    sicklists = Lists.query.order_by(Lists.start_date).all()
+    return render_template('index.html', title='Все б/л', sicklists=sicklists)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -175,6 +184,12 @@ def add_patient():
         return redirect(url_for('add_patient'))
     return render_template('add_patient.html', title='Добавление пациента', form=form)
 
+@app.route('/patient/<id>')
+@login_required
+def patient(id):
+    patient = Patients.query.filter_by(id=id).first_or_404()
+    return render_template('patient.html', patient=patient)
+
 @app.route('/edit_patient/<id>', methods=['GET', 'POST'])
 @login_required
 def edit_patient(id):
@@ -198,3 +213,25 @@ def edit_patient(id):
         form.birth_year.data = patient.birth_year
         form.sex.default = patient.sex
     return render_template('edit_patient.html', form=form, patient=patient)
+
+
+@app.route('/add_sicklist', methods=['GET', 'POST'])
+@login_required
+def add_sicklist():
+    form = AddSicklistForm()
+    form.patient.choices = [(p.id, p.last_name + ' ' + p.first_name + ' ' + p.middle_name) 
+                                for p in Patients.query.order_by('last_name')]
+    form.doctor.choices = [(e.id, e.last_name + ' ' + e.first_name + ' ' + e.middle_name) 
+                                for e in Employes.query.order_by('last_name')]
+    if form.validate_on_submit():
+        sicklist = Lists(sick_list_number=form.sick_list_number.data, 
+                         start_date=form.start_date.data,
+                         status=request.form['status'],
+                         diacrisis=form.diacrisis.data,
+                         patient_id=request.form['patient'], 
+                         doctor_id = request.form['doctor'])
+        db.session.add(sicklist)
+        db.session.commit()
+        flash('Больничный лист № {} добавлен'.format(form.sick_list_number.data))
+        return redirect(url_for('add_sicklist'))
+    return render_template('add_sicklist.html', title='Добавление нового больничного листа', form=form)
