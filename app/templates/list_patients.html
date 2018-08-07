@@ -19,7 +19,11 @@
                         <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
                     </a>
                 </td>
-                <td>{{ patient.last_name }} {{ patient.first_name }} {{ patient.middle_name }}</td>
+                <td>
+                    <a href="{{ url_for('patient', id = patient.id) }}">
+                    {{ patient.last_name }} {{ patient.first_name }} {{ patient.middle_name }}
+                    </a>
+                </td>
                 <td>{{ patient.birth_year }}</td>
                 <td>
                     {% if patient.sex == 'man' %}
