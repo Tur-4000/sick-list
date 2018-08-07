@@ -21,13 +21,13 @@ def before_request():
 @login_required
 def index():
     sicklists = Lists.query.order_by(Lists.start_date).all()
-    return render_template('index.html', title='Главная', sicklists=sicklists)
+    return render_template('index.html', title='Главная', header='Совместные осмотры сегодня', sicklists=sicklists)
 
 @app.route('/all')
 @login_required
 def all():
     sicklists = Lists.query.order_by(Lists.start_date).all()
-    return render_template('index.html', title='Все б/л', sicklists=sicklists)
+    return render_template('index.html', title='Все б/л', header='Список больничных листов', sicklists=sicklists)
 
 
 @app.route('/login', methods=['GET', 'POST'])

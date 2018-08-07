@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 
 {% block app_content %}
-    <h1>График совместных осмотров</h1>
+    <h1>{{ header }}</h1>
     <p><a href="{{ url_for('add_sicklist') }}">Добавить больничный лист</a></p>
     <table class="table table-condensed">
         <thead>
@@ -13,7 +13,7 @@
                 <th>б/л открыт</th>
                 <th>Статус б/л</th>
                 <th>Диагноз</th>
-                <th>Совместный осмотр</th>
+                <th>б/л закрыт</th>
             </tr>
         </thead>
         <tbody>
@@ -31,7 +31,7 @@
                     </a>
                 </td>
                 <td>{{ list.doctor.last_name + " " + list.doctor.first_name + " " + list.doctor.middle_name }}</td>
-                <td>{{ list.start_date }}</td>
+                <td>{{ moment(list.start_date).format('L') }}</td>
                 <td>
                     {% if list.status == 'open' %}
                     открыт
