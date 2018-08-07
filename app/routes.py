@@ -3,7 +3,7 @@ from app import app, db
 from app.forms import LoginForm, RegistrationForm, EditProfileForm
 from app.forms import AddEmployeForm, EditEmployeForm
 from app.forms import AddPatientForm, EditPatientForm
-from app.forms import AddSicklistForm
+from app.forms import AddSicklistForm, EditSicklistForm
 from flask_login import current_user, login_user, logout_user, login_required
 from app.models import User, Patients, Lists, Employes
 from werkzeug.urls import url_parse
@@ -86,24 +86,26 @@ def list_users():
     return render_template('list_users.html', users=users)
 
 
-@app.route('/edit_profile', methods=['GET', 'POST'])
+@app.route('/edit_profile/<id>', methods=['GET', 'POST'])
 @login_required
-def edit_profile():
-    form = EditProfileForm()
+def edit_profile(id):
+    user = User.query.filter_by(id=id).first_or_404()
+    form = EditProfileForm(obj=user)
     form.employe.choices = [(e.id, e.last_name + ' ' + e.first_name + ' ' + e.middle_name) 
                                     for e in Employes.query.order_by('last_name')]
-    #employe = Employes.query.filter_by(id=user.employe_id).first()
     if form.validate_on_submit():
-        current_user.username = form.username.data
-        current_user.email = form.email.data
-        current_user.employe_id = request.form['employe']
+        user.username = form.username.data
+        user.email = form.email.data
+        user.employe_id = request.form['employe']
         db.session.commit()
         flash('Изменения сохранены')
-        return redirect(url_for('edit_profile'))
+        return redirect(url_for('edit_profile', id=form.id.data))
     elif request.method == 'GET':
-        form.username.data = current_user.username
-        form.email.data = current_user.email
-    return render_template('edit_profile.html', title='Редактирование профиля', form=form)
+        form.id.data = user.id
+        form.username.data = user.username
+        form.email.data = user.email
+        form.employe.default = user.employe_id
+    return render_template('edit_profile.html', title='Редактирование профиля пользователя', form=form, user=user)
 
 
 @app.route('/list_employes')
@@ -235,3 +237,35 @@ def add_sicklist():
         flash('Больничный лист № {} добавлен'.format(form.sick_list_number.data))
         return redirect(url_for('add_sicklist'))
     return render_template('add_sicklist.html', title='Добавление нового больничного листа', form=form)
+
+@app.route('/edit_list/<id>', methods=['GET', 'POST'])
+@login_required
+def edit_list(id):
+    sicklist = Lists.query.filter_by(id=id).first_or_404()
+    form = EditSicklistForm(obj=sicklist)
+    form.patient.choices = [(p.id, p.last_name + ' ' + p.first_name + ' ' + p.middle_name) 
+                                for p in Patients.query.order_by('last_name')]
+    form.doctor.choices = [(e.id, e.last_name + ' ' + e.first_name + ' ' + e.middle_name) 
+                                for e in Employes.query.order_by('last_name')]
+    if form.validate_on_submit():
+        Lists.query.filter_by(id=int(form.id.data)).update(
+                               {'sick_list_number': form.sick_list_number.data,
+                                'start_date': form.start_date.data,
+                                'status': request.form['status'],
+                                'diacrisis': form.diacrisis.data,
+                                'patient_id': request.form['patient'],
+                                'doctor_id': request.form['doctor'],
+                                'end_date': form.end_date.data})
+        db.session.commit()
+        flash('Изменения сохранены')
+        return redirect(url_for('edit_list', id = form.id.data))
+    elif request.method == 'GET':
+        form.id.data = sicklist.id
+        form.sick_list_number.data = sicklist.sick_list_number
+        form.start_date.data = sicklist.start_date
+        form.status.default = sicklist.status
+        form.diacrisis.data = sicklist.diacrisis
+        form.patient.default = sicklist.patient.id
+        form.doctor.default = sicklist.doctor.id
+        form.end_date.data = sicklist.end_date
+    return render_template('edit_list.html', form=form, sicklist=sicklist)

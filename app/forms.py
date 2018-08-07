@@ -31,6 +31,7 @@ class RegistrationForm(FlaskForm):
 
 
 class EditProfileForm(FlaskForm):
+    id = HiddenField('id')
     username = StringField('Имя пользователя')
     email = StringField('eMail')
     employe = SelectField('Сотрудник', coerce=int)
@@ -80,6 +81,17 @@ class AddSicklistForm(FlaskForm):
     diacrisis = StringField('Диагноз', validators=[DataRequired()])
     doctor = SelectField('Лечащий врач', coerce=int)
     status = SelectField('Статус', choices=[('open', 'Открыт'), ('end', 'Закрыт'), ('relocated', 'перемещён')], coerce=str)
+    submit = SubmitField('Сохранить')
+
+class EditSicklistForm(FlaskForm):
+    id = HiddenField('id')
+    sick_list_number = StringField('Номер больничного', validators=[DataRequired()])
+    start_date = DateField('Дата открытия', format='%Y-%m-%d', validators=[DataRequired()])
+    patient = SelectField('Пациент', coerce=int)
+    diacrisis = StringField('Диагноз', validators=[DataRequired()])
+    doctor = SelectField('Лечащий врач', coerce=int)
+    status = SelectField('Статус', choices=[('open', 'Открыт'), ('end', 'Закрыт'), ('relocated', 'перемещён')], coerce=str)
+    end_date = DateField('Дата закрытия', format='%Y-%m-%d')
     submit = SubmitField('Сохранить')
     
     
