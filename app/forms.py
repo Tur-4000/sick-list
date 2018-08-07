@@ -91,7 +91,7 @@ class EditSicklistForm(FlaskForm):
     diacrisis = StringField('Диагноз', validators=[DataRequired()])
     doctor = SelectField('Лечащий врач', coerce=int)
     status = SelectField('Статус', choices=[('open', 'Открыт'), ('end', 'Закрыт'), ('relocated', 'перемещён')], coerce=str)
-    end_date = DateField('Дата закрытия', format='%Y-%m-%d')
+    end_date = DateField('Дата закрытия', format='%Y-%m-%d', validators=None)
     submit = SubmitField('Сохранить')
     
     

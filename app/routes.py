@@ -63,7 +63,7 @@ def register():
     form.employe.choices = [(e.id, e.last_name + ' ' + e.first_name + ' ' + e.middle_name) 
                                 for e in Employes.query.order_by('last_name')]
     if form.validate_on_submit():
-        user = User(username=form.username.data, email=form.email.data, employe_id = request.form['employe'])
+        user = User(username=form.username.data, email=form.email.data, employe_id=request.form['employe'])
         user.set_password(form.password.data)
         db.session.add(user)
         db.session.commit()
@@ -91,7 +91,7 @@ def list_users():
 def edit_profile(id):
     user = User.query.filter_by(id=id).first_or_404()
     form = EditProfileForm(obj=user)
-    form.employe.choices = [(e.id, e.last_name + ' ' + e.first_name + ' ' + e.middle_name) 
+    form.employe.choices = [(e.id, e.last_name + ' ' + e.first_name + ' ' + e.middle_name)
                                     for e in Employes.query.order_by('last_name')]
     if form.validate_on_submit():
         user.username = form.username.data
@@ -101,10 +101,11 @@ def edit_profile(id):
         flash('Изменения сохранены')
         return redirect(url_for('edit_profile', id=form.id.data))
     elif request.method == 'GET':
+        form.employe.default = user.employe_id
+        form.process()
         form.id.data = user.id
         form.username.data = user.username
         form.email.data = user.email
-        form.employe.default = user.employe_id
     return render_template('edit_profile.html', title='Редактирование профиля пользователя', form=form, user=user)
 
 
@@ -260,12 +261,14 @@ def edit_list(id):
         flash('Изменения сохранены')
         return redirect(url_for('edit_list', id = form.id.data))
     elif request.method == 'GET':
+        form.status.default = sicklist.status
+        form.patient.default = sicklist.patient.id
+        form.doctor.default = sicklist.doctor.id
+        form.process()
         form.id.data = sicklist.id
         form.sick_list_number.data = sicklist.sick_list_number
         form.start_date.data = sicklist.start_date
-        form.status.default = sicklist.status
         form.diacrisis.data = sicklist.diacrisis
-        form.patient.default = sicklist.patient.id
-        form.doctor.default = sicklist.doctor.id
         form.end_date.data = sicklist.end_date
+
     return render_template('edit_list.html', form=form, sicklist=sicklist)
