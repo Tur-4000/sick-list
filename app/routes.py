@@ -7,7 +7,7 @@ from app.forms import AddSicklistForm, EditSicklistForm, CloseListForm
 from flask_login import current_user, login_user, logout_user, login_required
 from app.models import User, Patients, Lists, Employes
 from werkzeug.urls import url_parse
-from datetime import datetime, timedelta
+from datetime import datetime, date, timedelta
 
 
 @app.before_request
@@ -20,14 +20,24 @@ def before_request():
 @app.route('/index', methods=['GET', 'POST'])
 @login_required
 def index():
+    today = date.today()
     sicklists = Lists.query.filter_by(status='open').order_by(Lists.start_date.desc()).all()
-    return render_template('index.html', title='Главная', header='Совместные осмотры сегодня', sicklists=sicklists)
+    return render_template('index.html', 
+                            title='Главная', 
+                            header='Совместные осмотры сегодня', 
+                            sicklists=sicklists, 
+                            today=today)
 
 @app.route('/all')
 @login_required
 def all():
+    today = date.today()
     sicklists = Lists.query.order_by(Lists.start_date.desc()).all()
-    return render_template('index.html', title='Все б/л', header='Список больничных листов', sicklists=sicklists)
+    return render_template('index.html', 
+                            title='Все б/л', 
+                            header='Список больничных листов', 
+                            sicklists=sicklists, 
+                            today=today)
 
 
 @app.route('/login', methods=['GET', 'POST'])
