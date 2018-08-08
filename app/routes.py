@@ -264,18 +264,13 @@ def edit_list(id):
     form.doctor.choices = [(e.id, e.last_name + ' ' + e.first_name + ' ' + e.middle_name) 
                                 for e in Employes.query.order_by('last_name')]
     if form.validate_on_submit():
-        if not form.end_date.data:
-            end_date = None
-        else:
-            end_date = form.end_date.data
         Lists.query.filter_by(id=int(form.id.data)).update(
                                {'sick_list_number': form.sick_list_number.data,
                                 'start_date': form.start_date.data,
                                 'status': request.form['status'],
                                 'diacrisis': form.diacrisis.data,
                                 'patient_id': request.form['patient'],
-                                'doctor_id': request.form['doctor'],
-                                'end_date': end_date})
+                                'doctor_id': request.form['doctor']})
         db.session.commit()
         flash('Изменения сохранены')
         return redirect(url_for('edit_list', id = form.id.data))
@@ -288,6 +283,4 @@ def edit_list(id):
         form.sick_list_number.data = sicklist.sick_list_number
         form.start_date.data = sicklist.start_date
         form.diacrisis.data = sicklist.diacrisis
-        form.end_date.data = sicklist.end_date
-
     return render_template('edit_list.html', form=form, sicklist=sicklist)

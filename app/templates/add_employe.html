@@ -6,7 +6,9 @@
     <div class="row">
         <div class="col-md-4">
             {{ wtf.quick_form(form) }}
-            <br><a href="{{ url_for('list_employes') }}">Назад к списку сотрудников</a>
+            <br><a href="{{ url_for('list_employes') }}">
+                <span class="glyphicon glyphicon-share" aria-hidden="true"></span>     
+                Назад к списку сотрудников</a>
         </div>
     </div>
 {% endblock %}
