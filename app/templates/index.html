@@ -8,14 +8,15 @@
             <tr>
                 <th></th>
                 <th>№ б/л</th>
+                <th>б/л открыт</th>
                 <th>Пациент (ФИО)</th>
                 <th>Доктор</th>
-                <th>б/л открыт</th>
+                <th>Диагноз</th>
                 <th>1-й СО</th>
                 <th>2-й СО</th>
                 <th>ВКК</th>
                 <th>Статус б/л</th>
-                <th>Диагноз</th>
+                
                 <th>б/л закрыт</th>
             </tr>
         </thead>
@@ -28,6 +29,7 @@
                     </a>
                 </td>
                 <td>{{ list.sick_list_number }}</td>
+                <td>{{ moment(list.start_date).format('L') }}</td>
                 <td>
                     <a href="{{ url_for('patient', id = list.patient.id) }}">
                     {{ list.patient.last_name + " " + list.patient.first_name + " " + list.patient.middle_name }}
@@ -38,7 +40,7 @@
                     {{ list.doctor.last_name + " " + list.doctor.first_name + " " + list.doctor.middle_name }}
                     </a>
                 </td>
-                <td>{{ moment(list.start_date).format('L') }}</td>
+                <td>{{ list.diacrisis }}</td>
                 <td>{{ moment(list.first_checkin).format('L') }}</td>
                 <td>{{ moment(list.second_checkin).format('L') }}</td>
                 <td>{{ moment(list.vkk).format('L') }}</td>
@@ -51,7 +53,7 @@
                     переведен
                     {% endif %}
                 </td>
-                <td>{{ list.diacrisis }}</td>
+                
                 <td>
                     {% if list.end_date %}
                     {{ list.end_date }}
