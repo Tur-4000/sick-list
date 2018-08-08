@@ -170,6 +170,11 @@ def edit_employe(id):
         form.job_title.data = employe.job_title
     return render_template('edit_employe.html', title='Редактирование сотрудника', form=form)
 
+@app.route('/employe/<id>')
+@login_required
+def employe(id):
+    employe = Employes.query.filter_by(id=id).first_or_404()
+    return render_template('employe.html', employe=employe)
 
 @app.route('/list_patients')
 @login_required

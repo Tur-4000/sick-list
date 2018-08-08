@@ -1,23 +1,28 @@
 {% extends "layout.html" %}
 
 {% block app_content %}
-    <h1>{{ header }}</h1>
-    <p><a href="{{ url_for('add_sicklist') }}">Добавить больничный лист</a></p>
+    <h1>Сотрудник: {{ employe.last_name + " " + employe.first_name + " " + employe.middle_name }}</h1>    
+    <hr>
+    <p>
+        <b>Должность:</b> {{ employe.job_title }}<br>
+    </p>    
+    <p><a href="{{ url_for('edit_employe', id = employe.id) }}">Редактировать информацию о сотруднике</a></p>
+
+    <h3>Больничные листы</h3>
     <table class="table table-condensed">
         <thead>
             <tr>
                 <th></th>
                 <th>№ б/л</th>
-                <th>Пациент (ФИО)</th>
-                <th>Доктор</th>
+                <th>Пациент</th>
                 <th>б/л открыт</th>
                 <th>Статус б/л</th>
                 <th>Диагноз</th>
-                <th>б/л закрыт</th>
+                <th>Совместный осмотр</th>
             </tr>
         </thead>
         <tbody>
-            {% for list in sicklists %}
+            {% for list in employe.doctor %}
             <tr>
                 <td>
                     <a href="{{ url_for('edit_list', id=list.id) }}">
@@ -25,17 +30,8 @@
                     </a>
                 </td>
                 <td>{{ list.sick_list_number }}</td>
-                <td>
-                    <a href="{{ url_for('patient', id = list.patient.id) }}">
-                    {{ list.patient.last_name + " " + list.patient.first_name + " " + list.patient.middle_name }}
-                    </a>
-                </td>
-                <td>
-                    <a href="{{ url_for('employe', id = list.doctor.id) }}">
-                    {{ list.doctor.last_name + " " + list.doctor.first_name + " " + list.doctor.middle_name }}
-                    </a>
-                </td>
-                <td>{{ moment(list.start_date).format('L') }}</td>
+                <td>{{ list.patient.last_name + " " + list.patient.first_name + " " + list.patient.middle_name }}</td>
+                <td>{{ list.start_date }}</td>
                 <td>
                     {% if list.status == 'open' %}
                     открыт

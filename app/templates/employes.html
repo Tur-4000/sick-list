@@ -19,7 +19,11 @@
                         <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
                     </a>
                 </td>
-                <td>{{ employe.last_name }} {{ employe.first_name }} {{ employe.middle_name }}</td>
+                <td>
+                    <a href="{{ url_for('employe', id = employe.id) }}">
+                    {{ employe.last_name }} {{ employe.first_name }} {{ employe.middle_name }}
+                    </a>
+                </td>
                 <td>{{ employe.job_title }}</td>
                 <td>
                     {% if employe.username %}

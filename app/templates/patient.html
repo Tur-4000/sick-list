@@ -25,7 +25,7 @@
             {% for list in patient.sick_lists %}
             <tr>
                 <td>
-                    <a href="#">
+                    <a href="{{ url_for('edit_list', id=list.id) }}">
                         <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
                     </a>
                 </td>
