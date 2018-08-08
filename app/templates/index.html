@@ -42,23 +42,14 @@
                 </td>
                 <td>{{ list.diacrisis }}</td>
 
-                {% if today == list.first_checkin %}
-                <td class="success">{{ moment(list.first_checkin).format('L') }}</td>
-                {% else %}
-                <td>{{ moment(list.first_checkin).format('L') }}</td>
-                {% endif %}
+                <td {% if today == list.first_checkin %} class="success" {% endif %}>
+                {{ moment(list.first_checkin).format('L') }}</td>
 
-                {% if today == list.second_checkin %}
-                <td class="success">{{ moment(list.second_checkin).format('L') }}</td>
-                {% else %}
-                <td>{{ moment(list.second_checkin).format('L') }}</td>
-                {% endif %}
+                <td {% if today == list.second_checkin %} class="success" {% endif %}>
+                {{ moment(list.second_checkin).format('L') }}</td>
 
-                {% if today == list.vkk %}
-                <td class="success">{{ moment(list.vkk).format('L') }}</td>
-                {% else %}
-                <td>{{ moment(list.vkk).format('L') }}</td>
-                {% endif %}
+                <td {% if today == list.vkk %} class="success" {% endif %}>
+                {{ moment(list.vkk).format('L') }}</td>
 
                 <td>
                     {% if list.status == 'open' %}
