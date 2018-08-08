@@ -11,6 +11,9 @@
                 <th>Пациент (ФИО)</th>
                 <th>Доктор</th>
                 <th>б/л открыт</th>
+                <th>1-й СО</th>
+                <th>2-й СО</th>
+                <th>ВКК</th>
                 <th>Статус б/л</th>
                 <th>Диагноз</th>
                 <th>б/л закрыт</th>
@@ -36,6 +39,9 @@
                     </a>
                 </td>
                 <td>{{ moment(list.start_date).format('L') }}</td>
+                <td>{{ moment(list.first_checkin).format('L') }}</td>
+                <td>{{ moment(list.second_checkin).format('L') }}</td>
+                <td>{{ moment(list.vkk).format('L') }}</td>
                 <td>
                     {% if list.status == 'open' %}
                     открыт
