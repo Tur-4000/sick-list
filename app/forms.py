@@ -98,7 +98,7 @@ class EditSicklistForm(FlaskForm):
     status = SelectField('Статус', choices=[('open', 'Открыт'), ('end', 'Закрыт'), ('relocated', 'перемещён')], coerce=str)
     submit = SubmitField('Сохранить')
     
-    # def validate_end_date(self, end_date):
-
-    
-    
+class CloseListForm(FlaskForm):
+    id = HiddenField('id')
+    end_date = DateField('Дата закрытия больничного', validators=[DataRequired()])
+    submit = SubmitField('Закрыть больничный')

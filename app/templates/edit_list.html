@@ -4,13 +4,13 @@
 {% block app_content %}
     <h1>Редактировать больничный лист</h1>
     <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-6">
             {{ wtf.quick_form(form) }}
             <br>
             <br><a href="{{ url_for('all') }}">
                 <span class="glyphicon glyphicon-share" aria-hidden="true"></span> 
                 Назад к списку больничных листов</a> | 
-            <a href="#">
+            <a href="{{ url_for('close_list', id=sicklist.id) }}">
                 <span class="glyphicon glyphicon-lock" aria-hidden="true"></span> 
                 Закрыть больничный лист
             </a>

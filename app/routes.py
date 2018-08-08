@@ -3,7 +3,7 @@ from app import app, db
 from app.forms import LoginForm, RegistrationForm, EditProfileForm
 from app.forms import AddEmployeForm, EditEmployeForm
 from app.forms import AddPatientForm, EditPatientForm
-from app.forms import AddSicklistForm, EditSicklistForm
+from app.forms import AddSicklistForm, EditSicklistForm, CloseListForm
 from flask_login import current_user, login_user, logout_user, login_required
 from app.models import User, Patients, Lists, Employes
 from werkzeug.urls import url_parse
@@ -284,3 +284,20 @@ def edit_list(id):
         form.start_date.data = sicklist.start_date
         form.diacrisis.data = sicklist.diacrisis
     return render_template('edit_list.html', form=form, sicklist=sicklist)
+
+@app.route('/close_list/<id>', methods=['GET', 'POST'])
+@login_required
+def close_list(id):
+    sicklist = Lists.query.filter_by(id=id).first_or_404()
+    form = CloseListForm()
+    if form.validate_on_submit():
+        Lists.query.filter_by(id=int(form.id.data)).update(
+                               {'end_date': form.end_date.data})
+        db.session.commit()
+        flash('Больничный лист № {} закрыт'.format(sicklist.sick_list_number))
+        return redirect(url_for('edit_list', id = form.id.data))
+    elif request.method == 'GET':
+        form.id.data = sicklist.id
+        form.end_date.data = sicklist.end_date
+    return render_template('close_list.html', form=form, sicklist=sicklist)
+
