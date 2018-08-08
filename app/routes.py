@@ -7,7 +7,7 @@ from app.forms import AddSicklistForm, EditSicklistForm, CloseListForm
 from flask_login import current_user, login_user, logout_user, login_required
 from app.models import User, Patients, Lists, Employes
 from werkzeug.urls import url_parse
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 @app.before_request
@@ -20,7 +20,7 @@ def before_request():
 @app.route('/index', methods=['GET', 'POST'])
 @login_required
 def index():
-    sicklists = Lists.query.order_by(Lists.start_date).all()
+    sicklists = Lists.query.filter_by(status='open').order_by(Lists.start_date).all()
     return render_template('index.html', title='Главная', header='Совместные осмотры сегодня', sicklists=sicklists)
 
 @app.route('/all')
@@ -242,8 +242,14 @@ def add_sicklist():
     form.doctor.choices = [(e.id, e.last_name + ' ' + e.first_name + ' ' + e.middle_name) 
                                 for e in Employes.query.order_by('last_name')]
     if form.validate_on_submit():
+        first_checkin_date = form.start_date.data + timedelta(days=10)
+        second_checkin_date = first_checkin_date + timedelta(days=10)
+        vkk_date = second_checkin_date + timedelta(days=10)
         sicklist = Lists(sick_list_number=form.sick_list_number.data, 
                          start_date=form.start_date.data,
+                         first_checkin = first_checkin_date,
+                         second_checkin = second_checkin_date,
+                         vkk = vkk_date,
                          status=request.form['status'],
                          diacrisis=form.diacrisis.data,
                          patient_id=request.form['patient'], 
@@ -292,7 +298,8 @@ def close_list(id):
     form = CloseListForm()
     if form.validate_on_submit():
         Lists.query.filter_by(id=int(form.id.data)).update(
-                               {'end_date': form.end_date.data})
+                               {'end_date': form.end_date.data,
+                                'status': 'end'})
         db.session.commit()
         flash('Больничный лист № {} закрыт'.format(sicklist.sick_list_number))
         return redirect(url_for('edit_list', id = form.id.data))

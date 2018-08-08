@@ -7,19 +7,16 @@
         <div class="col-md-12">
             <div class="col-md-4"></div>
             <div class="col-md-4">
-                    <h1>Войти в систему</h1>
-                    <div class="container">
-                        {% with messages = get_flashed_messages() %}
-                        {% if messages %}
-                            {% for message in messages %}
-                            <div class="alert alert-info" role="alert">{{ message }}</div>
-                            {% endfor %}
-                        {% endif %}
-                        {% endwith %}
-                
-                        {# application content needs to be provided in the app_content block #}
-                        {% block app_content %}{% endblock %}
-                    </div>
+                <h1>Войти в систему</h1>
+                <div class="row">
+                    {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                        {% for message in messages %}
+                        <div class="alert alert-info" role="alert">{{ message }}</div>
+                        {% endfor %}
+                    {% endif %}
+                    {% endwith %}
+                </div>
                 {{ wtf.quick_form(form) }}
             </div>
             <div class="col-md-4"></div>
