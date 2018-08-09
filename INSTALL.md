@@ -112,3 +112,101 @@ mysql> quit;
 ``` bash
 (venv) $ flask db upgrade
 ```
+
+### Настройка Gunicorn и Supervisor
+
+Выполняются пользователем с правами root
+
+Создать конфигурацию supervisor для sicklist
+
+``` bash 
+$ sudo vim /etc/supervisor/conf.d/sicklist.conf
+```
+Содержимое файла sicklist.conf
+
+```
+[program:sicklist]
+command=/home/<sicklist username>/sik-list/venv/bin/gunicorn -b localhost:8000 -w 2 sicklist:app
+directory=/home/<sicklist username>/sik-list
+user=<sicklist username>
+autostart=true
+autorestart=true
+stopasgroup=true
+killasgroup=true
+```
+
+Перезапустить supervisor
+
+``` bash
+$ sudo supervisorctl reload
+```
+
+### Настройка Nginx
+
+* Выполняется пользователем <sicklist username>
+#### Создание самоподписанных сертификатов
+``` bash
+$ cd /home/<sicklist username>/sik-list
+$ mkdir certs
+$ openssl req -new -newkey rsa:4096 -days 365 -nodes -x509 -keyout certs/key.pem -out certs/cert.pem
+```
+В результате в каталоге /home/<sicklist username>/sik-list/certs должны появится файлы key.pem и cert.pem
+
+* Выполняется пользователем с правами root
+#### Файл конфигурации NGINX
+
+``` bash
+$ sudo rm /etc/nginx/sites-enabled/default
+```
+
+``` bash
+$ sudo vim /etc/nginx/sites-enabled/sicklist
+```
+
+Содержимое файла /etc/nginx/sites-enabled/sicklist
+
+```
+server {
+    # прослушивание порта 80 (http)
+    listen 80;
+    server_name _;
+    location / {
+        # перенаправлять любые запросы на один и тот же URL-адрес, как на https
+        return 301 https://$host$request_uri;
+    }
+}
+server {
+    # прослушивание порта 443 (https)
+    listen 443 ssl;
+    server_name _;
+
+    # расположение self-signed SSL-сертификата
+    ssl_certificate /home/<sicklist username>/sik-list/certs/cert.pem;
+    ssl_certificate_key /home/<sicklist username>/sik-list/certs/key.pem;
+
+    # запись доступа и журналы ошибок в /var/log
+    access_log /var/log/sicklist_access.log;
+    error_log /var/log/sicklist_error.log;
+
+    location / {
+        # переадресация запросов приложений на сервер gunicorn
+        proxy_pass http://localhost:8000;
+        proxy_redirect off;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+
+    location /static {
+        # обрабатывать статические файлы напрямую, без пересылки в приложение
+        alias /home/<sicklist username>/sik-list/static;
+        expires 30d;
+    }
+}
+```
+
+Перезапуск NGINX
+
+``` bash
+$ sudo service nginx reload
+```
