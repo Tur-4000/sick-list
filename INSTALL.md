@@ -199,7 +199,7 @@ server {
 
     location /static {
         # обрабатывать статические файлы напрямую, без пересылки в приложение
-        alias /home/<sicklist username>/sick-list/static;
+        alias /home/<sicklist username>/sick-list/app/static;
         expires 30d;
     }
 }
