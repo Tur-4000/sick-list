@@ -8,6 +8,21 @@ from flask_login import current_user, login_user, logout_user, login_required
 from app.models import User, Patients, Lists, Employes
 from werkzeug.urls import url_parse
 from datetime import datetime, date, timedelta
+from numpy import is_busday
+from app.holidays import Holidays
+
+# holidays_2018 = [
+#     '2018-01-01',
+#     '2018-01-07',
+#     '2018-03-08',
+#     '2018-05-01',
+#     '2018-05-09',
+#     '2018-05-27',
+#     '2018-06-28',
+#     '2018-08-24',
+#     '2018-10-14',
+#     '2018-12-25'
+# ]
 
 
 @app.before_request
@@ -243,6 +258,11 @@ def edit_patient(id):
     return render_template('edit_patient.html', form=form, patient=patient)
 
 
+def is_work_day(checkinday, holiday):
+    while not is_busday(checkinday, holidays=holiday):
+        checkinday = checkinday - timedelta(days=1)
+    return checkinday
+
 @app.route('/add_sicklist', methods=['GET', 'POST'])
 @login_required
 def add_sicklist():
@@ -251,10 +271,13 @@ def add_sicklist():
                                 for p in Patients.query.order_by('last_name')]
     form.doctor.choices = [(e.id, e.last_name + ' ' + e.first_name + ' ' + e.middle_name) 
                                 for e in Employes.query.order_by('last_name')]
-    if form.validate_on_submit():
+    if form.validate_on_submit():        
         first_checkin_date = form.start_date.data + timedelta(days=10)
+        first_checkin_date = is_work_day(first_checkin_date, Holidays.HOLIDAYS_2018)
         second_checkin_date = first_checkin_date + timedelta(days=10)
+        second_checkin_date = is_work_day(second_checkin_date, Holidays.HOLIDAYS_2018)
         vkk_date = second_checkin_date + timedelta(days=10)
+        vkk_date = is_work_day(vkk_date, Holidays.HOLIDAYS_2018)
         sicklist = Lists(sick_list_number=form.sick_list_number.data, 
                          start_date=form.start_date.data,
                          first_checkin = first_checkin_date,
@@ -280,13 +303,22 @@ def edit_list(id):
     form.doctor.choices = [(e.id, e.last_name + ' ' + e.first_name + ' ' + e.middle_name) 
                                 for e in Employes.query.order_by('last_name')]
     if form.validate_on_submit():
+        first_checkin_date = form.start_date.data + timedelta(days=10)
+        first_checkin_date = is_work_day(first_checkin_date, Holidays.HOLIDAYS_2018)
+        second_checkin_date = first_checkin_date + timedelta(days=10)
+        second_checkin_date = is_work_day(second_checkin_date, Holidays.HOLIDAYS_2018)
+        vkk_date = second_checkin_date + timedelta(days=10)
+        vkk_date = is_work_day(vkk_date, Holidays.HOLIDAYS_2018)
         Lists.query.filter_by(id=int(form.id.data)).update(
                                {'sick_list_number': form.sick_list_number.data,
                                 'start_date': form.start_date.data,
                                 'status': request.form['status'],
                                 'diacrisis': form.diacrisis.data,
                                 'patient_id': request.form['patient'],
-                                'doctor_id': request.form['doctor']})
+                                'doctor_id': request.form['doctor'],
+                                'first_checkin': first_checkin_date,
+                                'second_checkin': second_checkin_date,
+                                'vkk': vkk_date})
         db.session.commit()
         flash('Изменения сохранены')
         return redirect(url_for('edit_list', id = form.id.data))
