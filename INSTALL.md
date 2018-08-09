@@ -81,3 +81,34 @@ SECRET_KEY можно сгенерировать командой
 ``` bash
 python3 -c "import uuid; print(uuid.uuid4().hex)"
 ```
+
+Задать переменную среды FLASK_APP
+От имени пользователя <sicklist username> выполнить команду
+``` bash
+$ echo "export FLASK_APP=microblog.py" >> ~/.profile
+```
+
+### Настройка MySQL
+
+Подключиться к MySQL
+пароль задавался при инсталляции MySQL (в ubuntu 18.04 использовать sudo mysql без указания пользователя)
+
+``` bash
+$ mysql -u root -p
+```
+
+Создать базу данных и пользователя с полным доступом к этой базе данных
+
+``` bash
+mysql> create database sicklist character set utf8 collate utf8_bin;
+mysql> create user '<sicklist db username>'@'localhost' identified by '<db-password>';
+mysql> grant all privileges on sicklist.* to '<sicklist db username>'@'localhost';
+mysql> flush privileges;
+mysql> quit;
+```
+
+Запустить процесс миграции базы данных
+
+``` bash
+(venv) $ flask db upgrade
+```
