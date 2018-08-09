@@ -62,13 +62,13 @@ $ source venv/bin/activate
 (venv) $ pip install gunicorn pymysql
 ```
 
-Создать файл .env с необходимыми переменными среды
+Создать файл `.env` с необходимыми переменными среды
 
 ``` bash
 $ vim /home/<sicklist username>/sik-list/.env
 ```
 
-Содержимое файла .env
+Содержимое файла `.env`
 
 ```
 SECRET_KEY=52cb883e323b48d78a0a36e8e951ba4a
@@ -77,12 +77,12 @@ MAIL_PORT=25
 DATABASE_URL=mysql+pymysql://<sicklist db username>:<db-password>@localhost:3306/sicklist
 ```
 
-SECRET_KEY можно сгенерировать командой
+`SECRET_KEY` можно сгенерировать командой
 ``` bash
 python3 -c "import uuid; print(uuid.uuid4().hex)"
 ```
 
-Задать переменную среды FLASK_APP
+Задать переменную среды `FLASK_APP`
 От имени пользователя <sicklist username> выполнить команду
 ``` bash
 $ echo "export FLASK_APP=microblog.py" >> ~/.profile
@@ -91,7 +91,7 @@ $ echo "export FLASK_APP=microblog.py" >> ~/.profile
 ### Настройка MySQL
 
 Подключиться к MySQL
-пароль задавался при инсталляции MySQL (в ubuntu 18.04 использовать sudo mysql без указания пользователя)
+пароль задавался при инсталляции MySQL (в ubuntu 18.04 использовать `sudo mysql` без указания пользователя)
 
 ``` bash
 $ mysql -u root -p
@@ -115,14 +115,14 @@ mysql> quit;
 
 ### Настройка Gunicorn и Supervisor
 
-Выполняются пользователем с правами root
+> Выполняются пользователем с правами `root`
 
-Создать конфигурацию supervisor для sicklist
+Создать конфигурацию `supervisor` для `sicklist`
 
 ``` bash 
 $ sudo vim /etc/supervisor/conf.d/sicklist.conf
 ```
-Содержимое файла sicklist.conf
+Содержимое файла `sicklist.conf`
 
 ```
 [program:sicklist]
@@ -135,7 +135,7 @@ stopasgroup=true
 killasgroup=true
 ```
 
-Перезапустить supervisor
+Перезапустить `supervisor`
 
 ``` bash
 $ sudo supervisorctl reload
@@ -150,9 +150,9 @@ $ cd /home/<sicklist username>/sik-list
 $ mkdir certs
 $ openssl req -new -newkey rsa:4096 -days 365 -nodes -x509 -keyout certs/key.pem -out certs/cert.pem
 ```
-В результате в каталоге /home/<sicklist username>/sik-list/certs должны появится файлы key.pem и cert.pem
+В результате в каталоге `/home/<sicklist username>/sik-list/certs` должны появится файлы `key.pem` и `cert.pem`
 
-> Выполняется пользователем с правами root
+> Выполняется пользователем с правами `root`
 #### Файл конфигурации NGINX
 
 ``` bash
@@ -163,7 +163,7 @@ $ sudo rm /etc/nginx/sites-enabled/default
 $ sudo vim /etc/nginx/sites-enabled/sicklist
 ```
 
-Содержимое файла /etc/nginx/sites-enabled/sicklist
+Содержимое файла `/etc/nginx/sites-enabled/sicklist`
 
 ```
 server {
