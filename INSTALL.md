@@ -143,7 +143,7 @@ $ sudo supervisorctl reload
 
 ### Настройка Nginx
 
-* Выполняется пользователем <sicklist username>
+> Выполняется пользователем `<sicklist username>`
 #### Создание самоподписанных сертификатов
 ``` bash
 $ cd /home/<sicklist username>/sik-list
@@ -152,7 +152,7 @@ $ openssl req -new -newkey rsa:4096 -days 365 -nodes -x509 -keyout certs/key.pem
 ```
 В результате в каталоге /home/<sicklist username>/sik-list/certs должны появится файлы key.pem и cert.pem
 
-* Выполняется пользователем с правами root
+> Выполняется пользователем с правами root
 #### Файл конфигурации NGINX
 
 ``` bash
