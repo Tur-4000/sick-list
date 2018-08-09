@@ -33,8 +33,51 @@ $ sudo ufw allow 443/tcp
 Создать пользователя от имени которого будет работать система
 
 ``` bash
-$ adduser --gecos "" <siklist username>
+$ adduser --gecos "" <sicklist username>
 # целесообразность включения в группу sudo под вопросом
-$ usermod -aG sudo <siklist username>
-$ su <siklist username>
+$ usermod -aG sudo <sicklist username>
+$ su <sicklist username>
+```
+
+## Установка приложения
+
+### Клонирование репозитория
+
+В домашнем каталоге пользователя <sicklist username> выплнить команды
+
+``` bash
+$ git clone https://github.com/Tur-4000/sick-list.git
+$ cd sick-list
+# на всякий случай
+$ git checkout master
+``` 
+
+## Подготовка виртуальной среды
+
+``` bash
+$ cd /home/<sicklist username>/sik-list
+$ python3 -m venv venv
+$ source venv/bin/activate
+(venv) $ pip install -r requirements.txt
+(venv) $ pip install gunicorn pymysql
+```
+
+Создать файл .env с необходимыми переменными среды
+
+``` bash
+$ vim /home/<sicklist username>/sik-list/.env
+```
+
+Содержимое файла .env
+
+```
+SECRET_KEY=52cb883e323b48d78a0a36e8e951ba4a
+MAIL_SERVER=localhost
+MAIL_PORT=25
+DATABASE_URL=mysql+pymysql://<sicklist db username>:<db-password>@localhost:3306/sicklist
+```
+
+SECRET_KEY можно сгенерировать командой
+``` bash
+python3 -c "import uuid; print(uuid.uuid4().hex)"
 ```
