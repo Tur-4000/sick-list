@@ -55,7 +55,7 @@ $ git checkout master
 ## Подготовка виртуальной среды
 
 ``` bash
-$ cd /home/<sicklist username>/sik-list
+$ cd /home/<sicklist username>/sick-list
 $ python3 -m venv venv
 $ source venv/bin/activate
 (venv) $ pip install -r requirements.txt
@@ -65,7 +65,7 @@ $ source venv/bin/activate
 Создать файл `.env` с необходимыми переменными среды
 
 ``` bash
-$ vim /home/<sicklist username>/sik-list/.env
+$ vim /home/<sicklist username>/sick-list/.env
 ```
 
 Содержимое файла `.env`
@@ -83,7 +83,7 @@ python3 -c "import uuid; print(uuid.uuid4().hex)"
 ```
 
 Задать переменную среды `FLASK_APP`
-От имени пользователя <sicklist username> выполнить команду
+От имени пользователя `<sicklist username>` выполнить команду
 ``` bash
 $ echo "export FLASK_APP=sicklist.py" >> ~/.profile
 ```
@@ -126,8 +126,8 @@ $ sudo vim /etc/supervisor/conf.d/sicklist.conf
 
 ```
 [program:sicklist]
-command=/home/<sicklist username>/sik-list/venv/bin/gunicorn -b localhost:8000 -w 2 sicklist:app
-directory=/home/<sicklist username>/sik-list
+command=/home/<sicklist username>/sick-list/venv/bin/gunicorn -b localhost:8000 -w 2 sicklist:app
+directory=/home/<sicklist username>/sick-list
 user=<sicklist username>
 autostart=true
 autorestart=true
@@ -146,11 +146,11 @@ $ sudo supervisorctl reload
 > Выполняется пользователем `<sicklist username>`
 #### Создание самоподписанных сертификатов
 ``` bash
-$ cd /home/<sicklist username>/sik-list
+$ cd /home/<sicklist username>/sick-list
 $ mkdir certs
 $ openssl req -new -newkey rsa:4096 -days 365 -nodes -x509 -keyout certs/key.pem -out certs/cert.pem
 ```
-В результате в каталоге `/home/<sicklist username>/sik-list/certs` должны появится файлы `key.pem` и `cert.pem`
+В результате в каталоге `/home/<sicklist username>/sick-list/certs` должны появится файлы `key.pem` и `cert.pem`
 
 > Выполняется пользователем с правами `root`
 #### Файл конфигурации NGINX
@@ -181,8 +181,8 @@ server {
     server_name _;
 
     # расположение self-signed SSL-сертификата
-    ssl_certificate /home/<sicklist username>/sik-list/certs/cert.pem;
-    ssl_certificate_key /home/<sicklist username>/sik-list/certs/key.pem;
+    ssl_certificate /home/<sicklist username>/sick-list/certs/cert.pem;
+    ssl_certificate_key /home/<sicklist username>/sick-list/certs/key.pem;
 
     # запись доступа и журналы ошибок в /var/log
     access_log /var/log/sicklist_access.log;
@@ -199,7 +199,7 @@ server {
 
     location /static {
         # обрабатывать статические файлы напрямую, без пересылки в приложение
-        alias /home/<sicklist username>/sik-list/static;
+        alias /home/<sicklist username>/sick-list/static;
         expires 30d;
     }
 }
@@ -209,4 +209,19 @@ server {
 
 ``` bash
 $ sudo service nginx reload
+```
+
+
+#### Создание учётной записи администратора сайта
+``` bash
+$ source venv/bin/activate
+(venv) $ flask shell
+```
+Имя администратора должно быть `Admin`
+``` python
+>>> adm = User(username="Admin", email="admin@example.com")
+>>> adm.set_password('<password>')
+>>> db.session.add(adm)
+>>> db.session.commit()
+>>> exit()
 ```
