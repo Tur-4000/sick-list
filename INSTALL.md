@@ -43,7 +43,7 @@ $ su <sicklist username>
 
 ### Клонирование репозитория
 
-В домашнем каталоге пользователя <sicklist username> выплнить команды
+В домашнем каталоге пользователя `<sicklist username>` выполнить команды
 
 ``` bash
 $ git clone https://github.com/Tur-4000/sick-list.git
@@ -85,7 +85,7 @@ python3 -c "import uuid; print(uuid.uuid4().hex)"
 Задать переменную среды `FLASK_APP`
 От имени пользователя <sicklist username> выполнить команду
 ``` bash
-$ echo "export FLASK_APP=microblog.py" >> ~/.profile
+$ echo "export FLASK_APP=sicklist.py" >> ~/.profile
 ```
 
 ### Настройка MySQL
