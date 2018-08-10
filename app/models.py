@@ -29,9 +29,9 @@ class User(UserMixin, db.Model):
 
 class Employes(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    last_name = db.Column(db.String(64))
-    first_name = db.Column(db.String(64))
-    middle_name = db.Column(db.String(64))
+    last_name = db.Column(db.String(64), index=True)
+    first_name = db.Column(db.String(64), index=True)
+    middle_name = db.Column(db.String(64), index=True)
     job_title = db.Column(db.String(254))
     user = db.relationship('User', backref='user', lazy='dynamic')
     doctor = db.relationship('Lists', backref='doctor', lazy='dynamic')
@@ -42,10 +42,10 @@ class Employes(db.Model):
 
 class Patients(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    last_name = db.Column(db.String(64))
-    first_name = db.Column(db.String(64))
-    middle_name = db.Column(db.String(64))
-    birth_year = db.Column(db.Integer)
+    last_name = db.Column(db.String(64), index=True)
+    first_name = db.Column(db.String(64), index=True)
+    middle_name = db.Column(db.String(64), index=True)
+    birth_year = db.Column(db.Date)
     sex = db.Column(db.Integer)
     sick_lists = db.relationship('Lists', backref='patient', lazy='dynamic')
 
@@ -55,7 +55,7 @@ class Patients(db.Model):
 
 class Lists(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    sick_list_number = db.Column(db.String(32))
+    sick_list_number = db.Column(db.String(32), index=True, unique=True)
     start_date = db.Column(db.Date)
     first_checkin = db.Column(db.Date)
     second_checkin = db.Column(db.Date)
@@ -65,6 +65,7 @@ class Lists(db.Model):
     diacrisis = db.Column(db.String(255))
     patient_id = db.Column(db.Integer, db.ForeignKey('patients.id'))
     doctor_id = db.Column(db.Integer, db.ForeignKey('employes.id'))
+    checkin = db.relationship('Checkins', backref='checkin', lazy='dynamic')
 
     def __repr__(self):
         return '<Больничный лист № {}>'.format(self.sick_list_number)
@@ -73,8 +74,18 @@ class Lists(db.Model):
 class Holiday(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     holiday_year = db.Column(db.Integer)
-    holiday_date = db.Column(db.Date)
+    holiday_date = db.Column(db.Date, index=True, unique=True)
     holiday_name = db.Column(db.String(128))
 
     def __repr__(self):
         return '<{} - {}>'.format(self.holiday_date, self.holiday_name)
+
+
+class Checkins(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    checkin_date = db.Column(db.Date)
+    checkin_note = db.Column(db.String(255))
+    checkins_list = db.Column(db.Integer, db.ForeignKey('lists.id'))
+
+    def __repr__(self):
+        return '<Совместный осмотр - {}>'.format(self.checkin_date)
