@@ -15,4 +15,4 @@ login = LoginManager(app)
 login.login_view = 'login'
 moment = Moment(app)
 
-from app import routes, models, holidays
+from app import routes, models

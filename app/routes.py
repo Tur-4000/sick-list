@@ -4,25 +4,13 @@ from app.forms import LoginForm, RegistrationForm, EditProfileForm
 from app.forms import AddEmployeForm, EditEmployeForm
 from app.forms import AddPatientForm, EditPatientForm
 from app.forms import AddSicklistForm, EditSicklistForm, CloseListForm
+from app.forms import AddHolidayForm, EditHolidayForm
 from flask_login import current_user, login_user, logout_user, login_required
-from app.models import User, Patients, Lists, Employes
+from app.models import User, Patients, Lists, Employes, Holiday
 from werkzeug.urls import url_parse
 from datetime import datetime, date, timedelta
 from numpy import is_busday
 from app.holidays import Holidays
-
-# holidays_2018 = [
-#     '2018-01-01',
-#     '2018-01-07',
-#     '2018-03-08',
-#     '2018-05-01',
-#     '2018-05-09',
-#     '2018-05-27',
-#     '2018-06-28',
-#     '2018-08-24',
-#     '2018-10-14',
-#     '2018-12-25'
-# ]
 
 
 @app.before_request
@@ -271,7 +259,7 @@ def add_sicklist():
                                 for p in Patients.query.order_by('last_name')]
     form.doctor.choices = [(e.id, e.last_name + ' ' + e.first_name + ' ' + e.middle_name) 
                                 for e in Employes.query.order_by('last_name')]
-    if form.validate_on_submit():        
+    if form.validate_on_submit():
         first_checkin_date = form.start_date.data + timedelta(days=10)
         first_checkin_date = is_work_day(first_checkin_date, Holidays.HOLIDAYS_2018)
         second_checkin_date = first_checkin_date + timedelta(days=10)
@@ -350,3 +338,45 @@ def close_list(id):
         form.end_date.data = sicklist.end_date
     return render_template('close_list.html', form=form, sicklist=sicklist)
 
+
+@app.route('/list_holidays')
+@login_required
+def list_holidays():
+    holidays = Holiday.query.order_by(Holiday.holiday_date.desc()).all()
+    return render_template('list_holidays.html', holidays=holidays)
+
+@app.route('/add_holiday', methods=['GET', 'POST'])
+@login_required
+def add_holiday():
+    form = AddHolidayForm()
+    if form.validate_on_submit():
+        year = form.holiday_date.data.year
+        holiday = Holiday(holiday_year=year, 
+                          holiday_date=form.holiday_date.data,
+                          holiday_name=form.holiday_name.data)
+        db.session.add(holiday)
+        db.session.commit()
+        flash('Выходной {} добавлен'.format(form.holiday_date.data))
+        return redirect(url_for('add_holiday'))
+    return render_template('holiday.html', form=form, title='Добавить выходной')
+
+@app.route('/edit_holiday/<id>', methods=['GET', 'POST'])
+@login_required
+def edit_holiday(id):
+    holiday = Holiday.query.filter_by(id=id).first_or_404()
+    form = EditHolidayForm()
+    if form.validate_on_submit():
+        year = form.holiday_date.data.year
+        Holiday.query.filter_by(id=int(form.id.data)).update( 
+                       {'holiday_year': year, 
+                        'holiday_date': form.holiday_date.data,
+                        'holiday_name': form.holiday_name.data})
+        db.session.add(holiday)
+        db.session.commit()
+        flash('Выходной {} добавлен'.format(form.holiday_date.data))
+        return redirect(url_for('list_holidays'))
+    elif request.method == 'GET':
+        form.id.data = holiday.id
+        form.holiday_date.data = holiday.holiday_date
+        form.holiday_name.data = holiday.holiday_name
+    return render_template('holiday.html', form=form, title='Редактировать выходной')

@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+
+{% block app_content %}
+    <h1>Празники и внеплановые выходные</h1>
+    <p><a href="{{ url_for('add_holiday') }}">Добавить выходной</a></p>
+    <table class="table table-condensed table-striped">
+        <thead>
+            <tr>
+                <th></th>
+                <th>Год</th>
+                <th>Дата</th>
+                <th>Описание</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for holiday in holidays %}
+            <tr>
+                <td><a href="{{ url_for('edit_holiday', id=holiday.id) }}">
+                        <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+                    </a>
+                </td>
+                <td>{{ holiday.holiday_year }}</td>
+                <td>{{ holiday.holiday_date }}</td>
+                <td>{{ holiday.holiday_name }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

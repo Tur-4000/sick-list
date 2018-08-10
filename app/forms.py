@@ -2,7 +2,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, HiddenField, SelectField
 from wtforms.fields.html5 import DateField
 from wtforms.validators import DataRequired, ValidationError, Email, EqualTo
-from app.models import User, Employes, Lists
+from app.models import User, Employes, Lists, Holiday
 
 
 class LoginForm(FlaskForm):
@@ -73,7 +73,6 @@ class EditPatientForm(FlaskForm):
 
 
 class AddSicklistForm(FlaskForm):
-    id = HiddenField('id')
     sick_list_number = StringField('Номер больничного', validators=[DataRequired()],
                                     render_kw={'placeholder': 'Номер больничного'})
     start_date = DateField('Дата открытия', format='%Y-%m-%d', validators=[DataRequired()])
@@ -102,3 +101,22 @@ class CloseListForm(FlaskForm):
     id = HiddenField('id')
     end_date = DateField('Дата закрытия больничного', validators=[DataRequired()])
     submit = SubmitField('Закрыть больничный')
+
+
+class AddHolidayForm(FlaskForm):
+    holiday_date = DateField('Дата выходного', validators=[DataRequired()])
+    holiday_name = StringField('Описание', validators=[DataRequired()],
+                                    render_kw={'placeholder': 'Описание'})
+    submit = SubmitField('Сохранить')
+
+    def validate_holiday_date(self, holiday_date):
+        hdate = Holiday.query.filter_by(holiday_date=holiday_date.data).first()
+        if hdate is not None:
+            raise ValidationError('Выходной на эту дату уже есть в базе')
+
+class EditHolidayForm(FlaskForm):
+    id = HiddenField('id')
+    holiday_date = DateField('Дата выходного', validators=[DataRequired()])
+    holiday_name = StringField('Описание', validators=[DataRequired()],
+                                    render_kw={'placeholder': 'Описание'})
+    submit = SubmitField('Сохранить')

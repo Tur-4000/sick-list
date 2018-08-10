@@ -68,3 +68,13 @@ class Lists(db.Model):
 
     def __repr__(self):
         return '<Больничный лист № {}>'.format(self.sick_list_number)
+
+
+class Holiday(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    holiday_year = db.Column(db.Integer)
+    holiday_date = db.Column(db.Date)
+    holiday_name = db.Column(db.String(128))
+
+    def __repr__(self):
+        return '<{} - {}>'.format(self.holiday_date, self.holiday_name)
