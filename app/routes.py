@@ -262,11 +262,11 @@ def add_sicklist():
     form.doctor.choices = [(e.id, e.last_name + ' ' + e.first_name + ' ' + e.middle_name) 
                                 for e in Employes.query.order_by('last_name')]
     if form.validate_on_submit():
-        first_checkin_date = form.start_date.data + timedelta(days=10)
+        first_checkin_date = form.start_date.data + timedelta(days=9)
         first_checkin_date = is_work_day(first_checkin_date, Holidays.HOLIDAYS_2018)
-        second_checkin_date = first_checkin_date + timedelta(days=10)
+        second_checkin_date = first_checkin_date + timedelta(days=9)
         second_checkin_date = is_work_day(second_checkin_date, Holidays.HOLIDAYS_2018)
-        vkk_date = second_checkin_date + timedelta(days=10)
+        vkk_date = second_checkin_date + timedelta(days=9)
         vkk_date = is_work_day(vkk_date, Holidays.HOLIDAYS_2018)
         sicklist = Lists(sick_list_number=form.sick_list_number.data, 
                          start_date=form.start_date.data,
@@ -293,11 +293,11 @@ def edit_list(id):
     form.doctor.choices = [(e.id, e.last_name + ' ' + e.first_name + ' ' + e.middle_name) 
                                 for e in Employes.query.order_by('last_name')]
     if form.validate_on_submit():
-        first_checkin_date = form.start_date.data + timedelta(days=10)
+        first_checkin_date = form.start_date.data + timedelta(days=9)
         first_checkin_date = is_work_day(first_checkin_date, Holidays.HOLIDAYS_2018)
-        second_checkin_date = first_checkin_date + timedelta(days=10)
+        second_checkin_date = first_checkin_date + timedelta(days=9)
         second_checkin_date = is_work_day(second_checkin_date, Holidays.HOLIDAYS_2018)
-        vkk_date = second_checkin_date + timedelta(days=10)
+        vkk_date = second_checkin_date + timedelta(days=9)
         vkk_date = is_work_day(vkk_date, Holidays.HOLIDAYS_2018)
         Lists.query.filter_by(id=int(form.id.data)).update(
                                {'sick_list_number': form.sick_list_number.data,
