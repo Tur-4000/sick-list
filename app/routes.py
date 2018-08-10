@@ -249,7 +249,7 @@ def edit_patient(id):
 
 
 def is_work_day(checkinday, holiday):
-    while not is_busday(checkinday, holidays=holiday):
+    while not is_busday(checkinday, weekmask='1111110', holidays=holiday):
         checkinday = checkinday - timedelta(days=1)
     return checkinday
 

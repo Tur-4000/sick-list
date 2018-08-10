@@ -6,41 +6,45 @@
     <table class="table table-condensed">
         <thead>
             <tr>
-                <th></th>
-                <th>№ б/л</th>
-                <th>б/л открыт</th>
-                <th>Пациент (ФИО)</th>
-                <th>Доктор</th>
-                <th>Диагноз</th>
-                <th>1-й СО</th>
-                <th>2-й СО</th>
-                <th>ВКК</th>
-                <th>Статус б/л</th>
-                
-                <th>б/л закрыт</th>
+                <th rowspan="2"></th>
+                <th rowspan="2">№ б/л</th>
+                <th rowspan="2">б/л открыт</th>
+                <th rowspan="2">Пациент (ФИО)</th>
+                <th rowspan="2">Доктор</th>
+                <th rowspan="2">Диагноз</th>
+                <th>1-й СО план</th>
+                <th>2-й СО план</th>
+                <th>ВКК план</th>
+                <th rowspan="2">Статус б/л</th>                
+                <th rowspan="2">б/л закрыт</th>
+            </tr>
+			<tr>
+				<th>1-й СО факт</th>                
+				<th>2-й СО факт</th>                
+				<th>ВКК факт</th>                
             </tr>
         </thead>
         <tbody>
             {% for list in sicklists %}
             <tr>
-                <td>
+                <td rowspan="2">
                     <a href="{{ url_for('edit_list', id=list.id) }}">
                         <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
                     </a>
                 </td>
-                <td>{{ list.sick_list_number }}</td>
-                <td>{{ moment(list.start_date).format('L') }}</td>
-                <td>
+                <td rowspan="2">{{ list.sick_list_number }}</td>
+                <td rowspan="2">{{ moment(list.start_date).format('L') }}</td>
+                <td rowspan="2">
                     <a href="{{ url_for('patient', id = list.patient.id) }}">
                     {{ list.patient.last_name + " " + list.patient.first_name + " " + list.patient.middle_name }}
                     </a>
                 </td>
-                <td>
+                <td rowspan="2">
                     <a href="{{ url_for('employe', id = list.doctor.id) }}">
                     {{ list.doctor.last_name + " " + list.doctor.first_name + " " + list.doctor.middle_name }}
                     </a>
                 </td>
-                <td>{{ list.diacrisis }}</td>
+                <td rowspan="2">{{ list.diacrisis }}</td>
 
                 <td {% if today == list.first_checkin %} class="success" {% endif %}>
                 {{ moment(list.first_checkin).format('L') }}</td>
@@ -51,7 +55,7 @@
                 <td {% if today == list.vkk %} class="success" {% endif %}>
                 {{ moment(list.vkk).format('L') }}</td>
 
-                <td>
+                <td rowspan="2">
                     {% if list.status == 'open' %}
                     открыт
                     {% elif list.status == 'end' %}
@@ -59,14 +63,18 @@
                     {% elif list.status == 'relocated' %}
                     переведен
                     {% endif %}
-                </td>
-                
-                <td>
+                </td>                
+                <td rowspan="2">
                     {% if list.end_date %}
                     {{ list.end_date }}
                     {% endif %}
                 </td>
             </tr>
+			<tr>
+				<td><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></td>
+				<td><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></td>
+				<td><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></td>
+			</tr>
             {% endfor %}
         </tbody>
     </table>
