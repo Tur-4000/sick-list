@@ -21,7 +21,9 @@ def before_request():
 @login_required
 def index():
     today = date.today()
-    sicklists = Lists.query.filter_by(status='open').order_by(Lists.start_date.desc()).all()
+    sicklists = Lists.query.filter_by(status='open', first_checkin=today).order_by(Lists.start_date.desc()).all()
+    sicklists += Lists.query.filter_by(status='open', second_checkin=today).order_by(Lists.start_date.desc()).all()
+    sicklists += Lists.query.filter_by(status='open', vkk=today).order_by(Lists.start_date.desc()).all()
     return render_template('index.html', 
                             title='Главная', 
                             header='Совместные осмотры сегодня', 
