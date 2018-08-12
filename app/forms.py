@@ -1,13 +1,15 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, HiddenField, SelectField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, HiddenField, SelectField, TextAreaField
 from wtforms.fields.html5 import DateField
-from wtforms.validators import DataRequired, ValidationError, Email, EqualTo
-from app.models import User, Employes, Lists, Holiday
+from wtforms.validators import DataRequired, ValidationError, Email, EqualTo, Length
+from app.models import User, Employes, Lists, Holiday, Checkins
 
 
 class LoginForm(FlaskForm):
-    username = StringField('Имя пользователя', validators=[DataRequired()])
-    password = PasswordField('Пароль', validators=[DataRequired()])
+    username = StringField('Имя пользователя', validators=[DataRequired()],
+                                    render_kw={'placeholder': 'Имя пользователя'})
+    password = PasswordField('Пароль', validators=[DataRequired()],
+                                    render_kw={'placeholder': 'Пароль'})
     remember_me = BooleanField('Запомнить')
     submit = SubmitField('Войти')
 
@@ -58,7 +60,7 @@ class AddPatientForm(FlaskForm):
     last_name = StringField('Фамилия', validators=[DataRequired()])
     first_name = StringField('Имя', validators=[DataRequired()])
     middle_name = StringField('Отчество', validators=[DataRequired()])
-    birth_year = DateField('Год рождения', validators=[DataRequired()])
+    birth_year = DateField('Дата рождения', validators=[DataRequired()])
     sex = SelectField('Пол', choices=[('man', 'Мужской'), ('woman', 'Женский')])
     submit = SubmitField('Сохранить')
 
@@ -67,7 +69,7 @@ class EditPatientForm(FlaskForm):
     last_name = StringField('Фамилия', validators=[DataRequired()])
     first_name = StringField('Имя', validators=[DataRequired()])
     middle_name = StringField('Отчество', validators=[DataRequired()])
-    birth_year = DateField('Год рождения', validators=[DataRequired()])
+    birth_year = DateField('Дата рождения', validators=[DataRequired()])
     sex = SelectField('Пол', choices=[('man', 'Мужской'), ('woman', 'Женский')], coerce=str)
     submit = SubmitField('Сохранить')
 
@@ -118,5 +120,20 @@ class EditHolidayForm(FlaskForm):
     id = HiddenField('id')
     holiday_date = DateField('Дата выходного', validators=[DataRequired()])
     holiday_name = StringField('Описание', validators=[DataRequired()],
+                                    render_kw={'placeholder': 'Описание'})
+    submit = SubmitField('Сохранить')
+
+class AddCheckinForm(FlaskForm):
+    id = HiddenField('id')
+    co = HiddenField('co_type')
+    checkin_date = DateField('Дата совместного осмотра', validators=[DataRequired()])
+    checkin_note = TextAreaField('Описание', validators=[Length(min=0, max=255)],
+                                    render_kw={'placeholder': 'Описание'})
+    submit = SubmitField('Сохранить')
+
+class EditCheckinForm(FlaskForm):
+    id = HiddenField('id')
+    checkin_date = DateField('Дата совместного осмотра', validators=[DataRequired()])
+    checkin_note = TextAreaField('Описание', validators=[Length(min=0, max=255)],
                                     render_kw={'placeholder': 'Описание'})
     submit = SubmitField('Сохранить')

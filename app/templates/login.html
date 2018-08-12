@@ -1,9 +1,9 @@
-{% extends 'bootstrap/base.html' %}
-{% import 'bootstrap/wtf.html' as wtf %}
+{% extends 'login-base.html' %}
+{#{% import 'bootstrap/wtf.html' as wtf %}#}
 
 {% block content %}
     
-    <div class="row">
+{#    <div class="row">
         <div class="col-md-12">
             <div class="col-md-4"></div>
             <div class="col-md-4">
@@ -22,4 +22,35 @@
             <div class="col-md-4"></div>
         </div>
     </div>
+#}
+    <form class="form-signin" method="POST">
+        <h2 class="form-signin-heading">Войти в систему</h2>
+
+        <div class="row">
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                <div class="alert alert-info" role="alert">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+            {% endwith %}
+        </div>
+        
+        {{ form.hidden_tag() }}
+        {{ form.username.label(class="sr-only") }} 
+        {{ form.username(class="form-control") }}
+        
+        {{ form.password.label(class="sr-only") }}
+        {{ form.password(class="form-control") }}
+        
+        <div class="checkbox">
+          <label>
+            {{ form.remember_me }} Remember me
+          </label>
+        </div>
+
+        {{ form.submit(class="btn btn-lg btn-primary btn-block") }}
+        
+    </form>
+
 {% endblock %}
