@@ -82,10 +82,11 @@ class Holiday(db.Model):
 
 
 class Checkins(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    checkin_id = db.Column(db.Integer, primary_key=True)
     checkin_date = db.Column(db.Date)
     checkin_note = db.Column(db.String(255))
-    checkins_list = db.Column(db.Integer, db.ForeignKey('lists.id'))
+    co_type = db.Column(db.Integer)
+    list_id = db.Column(db.Integer, db.ForeignKey('lists.id'))
 
     def __repr__(self):
         return '<Совместный осмотр - {}>'.format(self.checkin_date)

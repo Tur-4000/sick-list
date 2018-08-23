@@ -5,12 +5,12 @@ from app.forms import AddEmployeForm, EditEmployeForm
 from app.forms import AddPatientForm, EditPatientForm
 from app.forms import AddSicklistForm, EditSicklistForm, CloseListForm
 from app.forms import AddHolidayForm, EditHolidayForm
+from app.forms import AddCheckinForm, EditCheckinForm
 from flask_login import current_user, login_user, logout_user, login_required
-from app.models import User, Patients, Lists, Employes, Holiday
+from app.models import User, Patients, Lists, Employes, Holiday, Checkins
 from werkzeug.urls import url_parse
 from datetime import datetime, date, timedelta
 from numpy import is_busday
-from app.holidays import Holidays
 
 
 @app.before_request
@@ -37,7 +37,8 @@ def index():
 @login_required
 def all():
     today = date.today()
-    sicklists = Lists.query.order_by(Lists.start_date.desc()).all()
+    sicklists = Lists.query.outerjoin(Checkins, (
+                    Checkins.list_id == Lists.id)).order_by(Lists.start_date.desc()).all()
     return render_template('index.html', 
                             title='Все б/л', 
                             header='Список больничных листов', 
@@ -257,17 +258,21 @@ def is_work_day(checkinday, holiday):
 @login_required
 def add_sicklist():
     form = AddSicklistForm()
+    holidays_dates = Holiday.query.with_entities(Holiday.holiday_date).all()
+    holidays = []
+    for date in holidays_dates:
+        holidays += [date.holiday_date.strftime("%Y-%m-%d")]
     form.patient.choices = [(p.id, p.last_name + ' ' + p.first_name + ' ' + p.middle_name) 
                                 for p in Patients.query.order_by('last_name')]
     form.doctor.choices = [(e.id, e.last_name + ' ' + e.first_name + ' ' + e.middle_name) 
                                 for e in Employes.query.order_by('last_name')]
     if form.validate_on_submit():
         first_checkin_date = form.start_date.data + timedelta(days=9)
-        first_checkin_date = is_work_day(first_checkin_date, Holidays.HOLIDAYS_2018)
+        first_checkin_date = is_work_day(first_checkin_date, holidays)
         second_checkin_date = first_checkin_date + timedelta(days=9)
-        second_checkin_date = is_work_day(second_checkin_date, Holidays.HOLIDAYS_2018)
+        second_checkin_date = is_work_day(second_checkin_date, holidays)
         vkk_date = second_checkin_date + timedelta(days=9)
-        vkk_date = is_work_day(vkk_date, Holidays.HOLIDAYS_2018)
+        vkk_date = is_work_day(vkk_date, holidays)
         sicklist = Lists(sick_list_number=form.sick_list_number.data, 
                          start_date=form.start_date.data,
                          first_checkin = first_checkin_date,
@@ -286,6 +291,7 @@ def add_sicklist():
 @app.route('/edit_list/<id>', methods=['GET', 'POST'])
 @login_required
 def edit_list(id):
+    holidays = Holiday.query.with_entities(Holiday.holiday_date).all()
     sicklist = Lists.query.filter_by(id=id).first_or_404()
     form = EditSicklistForm(obj=sicklist)
     form.patient.choices = [(p.id, p.last_name + ' ' + p.first_name + ' ' + p.middle_name) 
@@ -294,11 +300,11 @@ def edit_list(id):
                                 for e in Employes.query.order_by('last_name')]
     if form.validate_on_submit():
         first_checkin_date = form.start_date.data + timedelta(days=9)
-        first_checkin_date = is_work_day(first_checkin_date, Holidays.HOLIDAYS_2018)
+        first_checkin_date = is_work_day(first_checkin_date, holidays)
         second_checkin_date = first_checkin_date + timedelta(days=9)
-        second_checkin_date = is_work_day(second_checkin_date, Holidays.HOLIDAYS_2018)
+        second_checkin_date = is_work_day(second_checkin_date, holidays)
         vkk_date = second_checkin_date + timedelta(days=9)
-        vkk_date = is_work_day(vkk_date, Holidays.HOLIDAYS_2018)
+        vkk_date = is_work_day(vkk_date, holidays)
         Lists.query.filter_by(id=int(form.id.data)).update(
                                {'sick_list_number': form.sick_list_number.data,
                                 'start_date': form.start_date.data,
@@ -382,3 +388,22 @@ def edit_holiday(id):
         form.holiday_date.data = holiday.holiday_date
         form.holiday_name.data = holiday.holiday_name
     return render_template('holiday.html', form=form, title='Редактировать выходной')
+
+
+@app.route('/add_checkin/<id>/<co>', methods=['GET', 'POST'])
+@login_required
+def add_checkin(id, co):
+    form = AddCheckinForm()
+    if form.validate_on_submit():
+        checkin = Checkins(checkin_date=form.checkin_date.data,
+                           checkin_note=form.checkin_note.data,
+                           co_type=form.co.data,
+                           list_id=form.id.data)
+        db.session.add(checkin)
+        db.session.commit()
+        flash('Совместный осмотр {} добавлен'.format(form.checkin_date.data))
+        return redirect(url_for('index'))
+    elif request.method == 'GET':
+        form.id.data = id
+        form.co.data = co
+    return render_template('add_checkin.html', form=form, title='Добавить совместный осмотр')

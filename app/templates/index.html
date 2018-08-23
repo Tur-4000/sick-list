@@ -71,9 +71,13 @@
                 </td>
             </tr>
 			<tr>
-				<td><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></td>
-				<td><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></td>
-				<td><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></td>
+				<td><a href="{{ url_for('add_checkin', id=list.id, co=1) }}">
+                    <span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a> 
+                    {{ list.checkin.checkin_date }}</td>
+				<td><a href="">
+                    <span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a></td>
+				<td><a href="">
+                    <span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a></td>
 			</tr>
             {% endfor %}
         </tbody>
