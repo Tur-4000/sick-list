@@ -291,7 +291,10 @@ def add_sicklist():
 @app.route('/edit_list/<id>', methods=['GET', 'POST'])
 @login_required
 def edit_list(id):
-    holidays = Holiday.query.with_entities(Holiday.holiday_date).all()
+    holidays_dates = Holiday.query.with_entities(Holiday.holiday_date).all()
+    holidays = []
+    for date in holidays_dates:
+        holidays += [date.holiday_date.strftime("%Y-%m-%d")]
     sicklist = Lists.query.filter_by(id=id).first_or_404()
     form = EditSicklistForm(obj=sicklist)
     form.patient.choices = [(p.id, p.last_name + ' ' + p.first_name + ' ' + p.middle_name) 
