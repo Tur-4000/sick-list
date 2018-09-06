@@ -24,7 +24,7 @@
                     {{ patient.last_name }} {{ patient.first_name }} {{ patient.middle_name }}
                     </a>
                 </td>
-                <td>{{ patient.birth_year }}</td>
+                <td>{{ moment(patient.birth_year).format('L') }}</td>
                 <td>
                     {% if patient.sex == 'man' %}
                     мужской

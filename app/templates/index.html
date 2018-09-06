@@ -74,9 +74,9 @@
 				<td><a href="{{ url_for('add_checkin', id=list.id, co=1) }}">
                     <span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a> 
                     {{ list.checkin.checkin_date }}</td>
-				<td><a href="">
+				<td><a href="{{ url_for('add_checkin', id=list.id, co=2) }}">
                     <span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a></td>
-				<td><a href="">
+				<td><a href="{{ url_for('add_checkin', id=list.id, co=3) }}">
                     <span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a></td>
 			</tr>
             {% endfor %}

@@ -11,6 +11,7 @@ from app.models import User, Patients, Lists, Employes, Holiday, Checkins
 from werkzeug.urls import url_parse
 from datetime import datetime, date, timedelta
 from numpy import is_busday
+from config import Config
 
 
 @app.before_request
@@ -250,7 +251,7 @@ def edit_patient(id):
 
 
 def is_work_day(checkinday, holiday):
-    while not is_busday(checkinday, weekmask='1111110', holidays=holiday):
+    while not is_busday(checkinday, weekmask=Config.WORK_DAYS, holidays=holiday):
         checkinday = checkinday - timedelta(days=1)
     return checkinday
 

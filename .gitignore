@@ -6,6 +6,7 @@ __pycache__/
 *$py.class
 *.code-workspace
 *.db
+*.bak
 
 # C extensions
 *.so
