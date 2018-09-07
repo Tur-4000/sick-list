@@ -279,9 +279,9 @@ def add_sicklist():
             holidays += [date.holiday_date.strftime("%Y-%m-%d")]
         first_checkin_date = form.start_date.data + timedelta(days=9)
         first_checkin_date = is_work_day(first_checkin_date, holidays)
-        second_checkin_date = first_checkin_date + timedelta(days=9)
+        second_checkin_date = first_checkin_date + timedelta(days=10)
         second_checkin_date = is_work_day(second_checkin_date, holidays)
-        vkk_date = second_checkin_date + timedelta(days=9)
+        vkk_date = second_checkin_date + timedelta(days=10)
         vkk_date = is_work_day(vkk_date, holidays)
         sicklist = Lists(sick_list_number=form.sick_list_number.data, 
                          start_date=form.start_date.data,
@@ -314,9 +314,9 @@ def edit_list(id):
     if form.validate_on_submit():
         first_checkin_date = form.start_date.data + timedelta(days=9)
         first_checkin_date = is_work_day(first_checkin_date, holidays)
-        second_checkin_date = first_checkin_date + timedelta(days=9)
+        second_checkin_date = first_checkin_date + timedelta(days=10)
         second_checkin_date = is_work_day(second_checkin_date, holidays)
-        vkk_date = second_checkin_date + timedelta(days=9)
+        vkk_date = second_checkin_date + timedelta(days=10)
         vkk_date = is_work_day(vkk_date, holidays)
         Lists.query.filter_by(id=int(form.id.data)).update(
                                {'sick_list_number': form.sick_list_number.data,
@@ -416,9 +416,9 @@ def add_checkin(id, type):
         for date in holidays_dates:
             holidays += [date.holiday_date.strftime("%Y-%m-%d")]
         if type == 'first':
-            second_checkin_date = form.checkin_date.data + timedelta(days=9)
+            second_checkin_date = form.checkin_date.data + timedelta(days=10)
             second_checkin_date = is_work_day(second_checkin_date, holidays)
-            vkk_date = second_checkin_date + timedelta(days=9)
+            vkk_date = second_checkin_date + timedelta(days=10)
             vkk_date = is_work_day(vkk_date, holidays)
             Lists.query.filter_by(id=int(form.id.data)).update(
                             {'first_checkin_fact': form.checkin_date.data,
@@ -426,7 +426,7 @@ def add_checkin(id, type):
                              'second_checkin': second_checkin_date,
                              'vkk': vkk_date})
         elif type == 'second':
-            vkk_date = form.checkin_date.data + timedelta(days=9)
+            vkk_date = form.checkin_date.data + timedelta(days=10)
             vkk_date = is_work_day(vkk_date, holidays)
             Lists.query.filter_by(id=int(form.id.data)).update(
                             {'second_checkin_fact': form.checkin_date.data,
