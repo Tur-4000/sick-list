@@ -1,5 +1,5 @@
 
-class Holidays():
+class Holidays:
     HOLIDAYS_2018 = [
         '2018-01-01',
         '2018-01-07',

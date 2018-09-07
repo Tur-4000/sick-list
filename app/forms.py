@@ -2,7 +2,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, HiddenField, SelectField, TextAreaField
 from wtforms.fields.html5 import DateField
 from wtforms.validators import DataRequired, ValidationError, Email, EqualTo, Length
-from app.models import User, Employes, Lists, Holiday, Checkins
+from app.models import User, Employes, Lists, Holiday
 
 
 class LoginForm(FlaskForm):
@@ -125,7 +125,6 @@ class EditHolidayForm(FlaskForm):
 
 class AddCheckinForm(FlaskForm):
     id = HiddenField('id')
-    co = HiddenField('co_type')
     checkin_date = DateField('Дата совместного осмотра', validators=[DataRequired()])
     checkin_note = TextAreaField('Описание', validators=[Length(min=0, max=255)],
                                     render_kw={'placeholder': 'Описание'})

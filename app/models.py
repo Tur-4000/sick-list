@@ -58,14 +58,19 @@ class Lists(db.Model):
     sick_list_number = db.Column(db.String(32), index=True, unique=True)
     start_date = db.Column(db.Date)
     first_checkin = db.Column(db.Date)
+    first_checkin_fact = db.Column(db.Date)
+    first_checkin_note = db.Column(db.String(255))
     second_checkin = db.Column(db.Date)
+    second_checkin_fact = db.Column(db.Date)
+    second_checkin_note = db.Column(db.String(255))
     vkk = db.Column(db.Date)
+    vkk_fact = db.Column(db.Date)
+    vkk_note = db.Column(db.String(255))
     end_date = db.Column(db.Date)
     status = db.Column(db.String(32))
     diacrisis = db.Column(db.String(255))
     patient_id = db.Column(db.Integer, db.ForeignKey('patients.id'))
     doctor_id = db.Column(db.Integer, db.ForeignKey('employes.id'))
-    checkin = db.relationship('Checkins', backref='checkin', lazy='dynamic')
 
     def __repr__(self):
         return '<Больничный лист № {}>'.format(self.sick_list_number)
@@ -79,14 +84,3 @@ class Holiday(db.Model):
 
     def __repr__(self):
         return '<{} - {}>'.format(self.holiday_date, self.holiday_name)
-
-
-class Checkins(db.Model):
-    checkin_id = db.Column(db.Integer, primary_key=True)
-    checkin_date = db.Column(db.Date)
-    checkin_note = db.Column(db.String(255))
-    co_type = db.Column(db.Integer)
-    list_id = db.Column(db.Integer, db.ForeignKey('lists.id'))
-
-    def __repr__(self):
-        return '<Совместный осмотр - {}>'.format(self.checkin_date)

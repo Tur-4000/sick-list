@@ -3,20 +3,20 @@
 {% block app_content %}
     <h1>{{ header }}</h1>
     <p><a href="{{ url_for('add_sicklist') }}">Добавить больничный лист</a></p>
-    <table class="table table-condensed">
+    <table class="table table-condensed table-bordered">
         <thead>
             <tr>
                 <th rowspan="2"></th>
-                <th rowspan="2">№ б/л</th>
-                <th rowspan="2">б/л открыт</th>
-                <th rowspan="2">Пациент (ФИО)</th>
-                <th rowspan="2">Доктор</th>
-                <th rowspan="2">Диагноз</th>
+                <th rowspan="2" style="vertical-align: middle">№ б/л</th>
+                <th rowspan="2" style="vertical-align: middle">б/л открыт</th>
+                <th rowspan="2" style="vertical-align: middle">Пациент (ФИО)</th>
+                <th rowspan="2" style="vertical-align: middle">Доктор</th>
+                <th rowspan="2" style="vertical-align: middle">Диагноз</th>
                 <th>1-й СО план</th>
                 <th>2-й СО план</th>
                 <th>ВКК план</th>
-                <th rowspan="2">Статус б/л</th>                
-                <th rowspan="2">б/л закрыт</th>
+                <th rowspan="2" style="vertical-align: middle">Статус б/л</th>
+                <th rowspan="2" style="vertical-align: middle">б/л закрыт</th>
             </tr>
 			<tr>
 				<th>1-й СО факт</th>                
@@ -71,13 +71,33 @@
                 </td>
             </tr>
 			<tr>
-				<td><a href="{{ url_for('add_checkin', id=list.id, co=1) }}">
-                    <span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a> 
-                    {{ list.checkin.checkin_date }}</td>
-				<td><a href="{{ url_for('add_checkin', id=list.id, co=2) }}">
-                    <span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a></td>
-				<td><a href="{{ url_for('add_checkin', id=list.id, co=3) }}">
-                    <span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a></td>
+				<td>
+                    {% if not list.first_checkin_fact %}
+                    <a href="{{ url_for('add_checkin', id=list.id, type='first') }}">
+                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                    </a>
+                    {% else %}
+                    {{ moment(list.first_checkin_fact).format('L') }}
+                    {% endif %}
+                </td>
+				<td>
+                    {% if not list.second_checkin_fact %}
+                    <a href="{{ url_for('add_checkin', id=list.id, type='second') }}">
+                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                    </a>
+                    {% else %}
+                    {{ moment(list.second_checkin_fact).format('L') }}
+                    {% endif %}
+                </td>
+				<td>
+                    {% if not list.vkk_checkin_fact %}
+                    <a href="{{ url_for('add_checkin', id=list.id, type='vkk') }}">
+                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                    </a>
+                    {% else %}
+                    {{ moment(list.vkk_checkin_fact).format('L') }}
+                    {% endif %}
+                </td>
 			</tr>
             {% endfor %}
         </tbody>
