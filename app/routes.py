@@ -5,7 +5,7 @@ from app.forms import AddEmployeForm, EditEmployeForm
 from app.forms import AddPatientForm, EditPatientForm
 from app.forms import AddSicklistForm, EditSicklistForm, CloseListForm
 from app.forms import AddHolidayForm, EditHolidayForm
-from app.forms import AddCheckinForm, EditCheckinForm
+from app.forms import CheckinForm
 from flask_login import current_user, login_user, logout_user, login_required
 from app.models import User, Patients, Lists, Employes, Holiday
 from werkzeug.urls import url_parse
@@ -141,7 +141,10 @@ def edit_profile(id):
         form.id.data = user.id
         form.username.data = user.username
         form.email.data = user.email
-    return render_template('edit_profile.html', title='Редактирование профиля пользователя', form=form, user=user)
+    return render_template('edit_profile.html',
+                           title='Редактирование профиля пользователя',
+                           form=form,
+                           user=user)
 
 
 @app.route('/list_employes')
@@ -314,10 +317,19 @@ def edit_list(id):
     if form.validate_on_submit():
         first_checkin_date = form.start_date.data + timedelta(days=9)
         first_checkin_date = is_work_day(first_checkin_date, holidays)
-        second_checkin_date = first_checkin_date + timedelta(days=10)
-        second_checkin_date = is_work_day(second_checkin_date, holidays)
-        vkk_date = second_checkin_date + timedelta(days=10)
-        vkk_date = is_work_day(vkk_date, holidays)
+        if sicklist.first_checkin_fact:
+            second_checkin_date = sicklist.first_checkin_fact + timedelta(days=10)
+            second_checkin_date = is_work_day(second_checkin_date, holidays)
+        else:
+            second_checkin_date = first_checkin_date + timedelta(days=10)
+            second_checkin_date = is_work_day(second_checkin_date, holidays)
+        if sicklist.second_checkin_fact:
+            vkk_date = sicklist.second_checkin_fact + timedelta(days=10)
+            vkk_date = is_work_day(vkk_date, holidays)
+        else:
+            vkk_date = second_checkin_date + timedelta(days=10)
+            vkk_date = is_work_day(vkk_date, holidays)
+
         Lists.query.filter_by(id=int(form.id.data)).update(
                                {'sick_list_number': form.sick_list_number.data,
                                 'start_date': form.start_date.data,
@@ -408,7 +420,7 @@ def edit_holiday(id):
 @app.route('/add_checkin/<id>/<type>', methods=['GET', 'POST'])
 @login_required
 def add_checkin(id, type):
-    form = AddCheckinForm()
+    form = CheckinForm()
     if form.validate_on_submit():
         holidays_dates = Holiday.query.with_entities(
             Holiday.holiday_date).all()
@@ -441,6 +453,57 @@ def add_checkin(id, type):
         return redirect(url_for('index'))
     elif request.method == 'GET':
         form.id.data = id
-    return render_template('add_checkin.html',
+    return render_template('checkin.html',
+                           form=form,
+                           title='Добавить совместный осмотр')
+
+
+@app.route('/edit_checkin/<id>/<type>', methods=['GET', 'POST'])
+@login_required
+def edit_checkin(id, type):
+    form = CheckinForm()
+    if form.validate_on_submit():
+        holidays_dates = Holiday.query.with_entities(
+            Holiday.holiday_date).all()
+        holidays = []
+        for date in holidays_dates:
+            holidays += [date.holiday_date.strftime("%Y-%m-%d")]
+        if type == 'first':
+            second_checkin_date = form.checkin_date.data + timedelta(days=10)
+            second_checkin_date = is_work_day(second_checkin_date, holidays)
+            vkk_date = second_checkin_date + timedelta(days=10)
+            vkk_date = is_work_day(vkk_date, holidays)
+            Lists.query.filter_by(id=int(form.id.data)).update(
+                            {'first_checkin_fact': form.checkin_date.data,
+                             'first_checkin_note': form.checkin_note.data,
+                             'second_checkin': second_checkin_date,
+                             'vkk': vkk_date})
+        elif type == 'second':
+            vkk_date = form.checkin_date.data + timedelta(days=10)
+            vkk_date = is_work_day(vkk_date, holidays)
+            Lists.query.filter_by(id=int(form.id.data)).update(
+                            {'second_checkin_fact': form.checkin_date.data,
+                             'second_checkin_note': form.checkin_note.data,
+                             'vkk': vkk_date})
+        elif type == 'vkk':
+            Lists.query.filter_by(id=int(form.id.data)).update(
+                            {'vkk_checkin_fact': form.checkin_date.data,
+                             'vkk_checkin_note': form.checkin_note.data})
+        db.session.commit()
+        flash('Совместный осмотр {} изменён'.format(form.checkin_date.data))
+        return redirect(url_for('index'))
+    elif request.method == 'GET':
+        list = Lists.query.filter_by(id=int(id)).first_or_404()
+        form.id.data = id
+        if type == 'first':
+            form.checkin_date.data = list.first_checkin_fact
+            form.checkin_note.data = list.first_checkin_note
+        elif type == 'second':
+            form.checkin_date.data = list.second_checkin_fact
+            form.checkin_note.data = list.second_checkin_note
+        elif type == 'vkk':
+            form.checkin_date.data = list.vkk_fact
+            form.checkin_note.data = list.vkk_note
+    return render_template('checkin.html',
                            form=form,
                            title='Добавить совместный осмотр')

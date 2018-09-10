@@ -13,6 +13,7 @@ class LoginForm(FlaskForm):
     remember_me = BooleanField('Запомнить')
     submit = SubmitField('Войти')
 
+
 class RegistrationForm(FlaskForm):
     username = StringField('Имя пользователя', validators=[DataRequired()])
     email = StringField('Email', validators=[DataRequired(), Email()])
@@ -31,6 +32,7 @@ class RegistrationForm(FlaskForm):
         if user is not None:
             raise ValidationError('Пожалуйста, используйте другой email')
 
+
 class EditProfileForm(FlaskForm):
     id = HiddenField('id')
     username = StringField('Имя пользователя')
@@ -45,6 +47,7 @@ class AddEmployeForm(FlaskForm):
     middle_name = StringField('Отчество')
     job_title = StringField('Должность', validators=[DataRequired()])
     submit = SubmitField('Сохранить')
+
 
 class EditEmployeForm(FlaskForm):
     id = HiddenField('id')
@@ -63,6 +66,7 @@ class AddPatientForm(FlaskForm):
     birth_year = DateField('Дата рождения', validators=[DataRequired()])
     sex = SelectField('Пол', choices=[('man', 'Мужской'), ('woman', 'Женский')])
     submit = SubmitField('Сохранить')
+
 
 class EditPatientForm(FlaskForm):
     id = HiddenField('id')
@@ -123,16 +127,12 @@ class EditHolidayForm(FlaskForm):
                                     render_kw={'placeholder': 'Описание'})
     submit = SubmitField('Сохранить')
 
-class AddCheckinForm(FlaskForm):
-    id = HiddenField('id')
-    checkin_date = DateField('Дата совместного осмотра', validators=[DataRequired()])
-    checkin_note = TextAreaField('Описание', validators=[Length(min=0, max=255)],
-                                    render_kw={'placeholder': 'Описание'})
-    submit = SubmitField('Сохранить')
 
-class EditCheckinForm(FlaskForm):
+class CheckinForm(FlaskForm):
     id = HiddenField('id')
-    checkin_date = DateField('Дата совместного осмотра', validators=[DataRequired()])
-    checkin_note = TextAreaField('Описание', validators=[Length(min=0, max=255)],
-                                    render_kw={'placeholder': 'Описание'})
+    checkin_date = DateField('Дата совместного осмотра',
+                             validators=[DataRequired()])
+    checkin_note = TextAreaField('Описание',
+                                 validators=[Length(min=0, max=255)],
+                                 render_kw={'placeholder': 'Описание'})
     submit = SubmitField('Сохранить')

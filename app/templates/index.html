@@ -77,7 +77,8 @@
                         <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
                     </a>
                     {% else %}
-                    {{ moment(list.first_checkin_fact).format('L') }}
+                    <a href="{{ url_for('edit_checkin', id=list.id, type='first') }}">
+                        {{ moment(list.first_checkin_fact).format('L') }}</a>
                     {% endif %}
                 </td>
 				<td>
@@ -86,7 +87,8 @@
                         <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
                     </a>
                     {% else %}
-                    {{ moment(list.second_checkin_fact).format('L') }}
+                    <a href="{{ url_for('edit_checkin', id=list.id, type='second') }}">
+                        {{ moment(list.second_checkin_fact).format('L') }}</a>
                     {% endif %}
                 </td>
 				<td>
@@ -95,7 +97,8 @@
                         <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
                     </a>
                     {% else %}
-                    {{ moment(list.vkk_checkin_fact).format('L') }}
+                    <a href="{{ url_for('edit_checkin', id=list.id, type='vkk') }}">
+                        {{ moment(list.vkk_checkin_fact).format('L') }}</a>
                     {% endif %}
                 </td>
 			</tr>
