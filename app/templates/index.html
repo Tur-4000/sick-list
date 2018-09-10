@@ -2,7 +2,7 @@
 
 {% block app_content %}
     <h1>{{ header }}</h1>
-    <p><a href="{{ url_for('add_sicklist') }}">Добавить больничный лист</a></p>
+    <p><a href="{{ url_for('main.add_sicklist') }}">Добавить больничный лист</a></p>
     <table class="table table-condensed table-bordered">
         <thead>
             <tr>
@@ -28,19 +28,19 @@
             {% for list in sicklists %}
             <tr>
                 <td rowspan="2">
-                    <a href="{{ url_for('edit_list', id=list.id) }}">
+                    <a href="{{ url_for('main.edit_list', id=list.id) }}">
                         <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
                     </a>
                 </td>
                 <td rowspan="2">{{ list.sick_list_number }}</td>
                 <td rowspan="2">{{ moment(list.start_date).format('L') }}</td>
                 <td rowspan="2">
-                    <a href="{{ url_for('patient', id = list.patient.id) }}">
+                    <a href="{{ url_for('main.patient', id = list.patient.id) }}">
                     {{ list.patient.last_name + " " + list.patient.first_name + " " + list.patient.middle_name }}
                     </a>
                 </td>
                 <td rowspan="2">
-                    <a href="{{ url_for('employe', id = list.doctor.id) }}">
+                    <a href="{{ url_for('main.employe', id = list.doctor.id) }}">
                     {{ list.doctor.last_name + " " + list.doctor.first_name + " " + list.doctor.middle_name }}
                     </a>
                 </td>
@@ -73,31 +73,31 @@
 			<tr>
 				<td>
                     {% if not list.first_checkin_fact %}
-                    <a href="{{ url_for('add_checkin', id=list.id, type='first') }}">
+                    <a href="{{ url_for('main.add_checkin', id=list.id, type='first') }}">
                         <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
                     </a>
                     {% else %}
-                    <a href="{{ url_for('edit_checkin', id=list.id, type='first') }}">
+                    <a href="{{ url_for('main.edit_checkin', id=list.id, type='first') }}">
                         {{ moment(list.first_checkin_fact).format('L') }}</a>
                     {% endif %}
                 </td>
 				<td>
                     {% if not list.second_checkin_fact %}
-                    <a href="{{ url_for('add_checkin', id=list.id, type='second') }}">
+                    <a href="{{ url_for('main.add_checkin', id=list.id, type='second') }}">
                         <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
                     </a>
                     {% else %}
-                    <a href="{{ url_for('edit_checkin', id=list.id, type='second') }}">
+                    <a href="{{ url_for('main.edit_checkin', id=list.id, type='second') }}">
                         {{ moment(list.second_checkin_fact).format('L') }}</a>
                     {% endif %}
                 </td>
 				<td>
                     {% if not list.vkk_checkin_fact %}
-                    <a href="{{ url_for('add_checkin', id=list.id, type='vkk') }}">
+                    <a href="{{ url_for('main.add_checkin', id=list.id, type='vkk') }}">
                         <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
                     </a>
                     {% else %}
-                    <a href="{{ url_for('edit_checkin', id=list.id, type='vkk') }}">
+                    <a href="{{ url_for('main.edit_checkin', id=list.id, type='vkk') }}">
                         {{ moment(list.vkk_checkin_fact).format('L') }}</a>
                     {% endif %}
                 </td>

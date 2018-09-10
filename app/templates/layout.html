@@ -20,29 +20,29 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="{{ url_for('index') }}">
+                <a class="navbar-brand" href="{{ url_for('main.index') }}">
                     <img alt="Adastra" src="{{ url_for('static', filename='img/logo.jpg') }}">
                 </a>
             </div>
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
-                    <li><a href="{{ url_for('index') }}"><span class="glyphicon glyphicon-tasks" aria-hidden="true"></span> 
+                    <li><a href="{{ url_for('main.index') }}"><span class="glyphicon glyphicon-tasks" aria-hidden="true"></span>
                         Сегодня</a></li>
-                    <li><a href="{{ url_for('all') }}"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> 
+                    <li><a href="{{ url_for('main.all') }}"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span>
                         Все б/л</a></li>
                     <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                             <span class="glyphicon glyphicon-book" aria-hidden="true"></span> 
                             Справочники <span class="caret"></span></a>
                         <ul class="dropdown-menu">
-                            <li><a href="{{ url_for('list_employes') }}">
+                            <li><a href="{{ url_for('main.list_employes') }}">
                                     <span class="glyphicon glyphicon-user" aria-hidden="true"></span> 
                                 Сотрудники</a></li>
-                            <li><a href="{{ url_for('list_patients') }}">
+                            <li><a href="{{ url_for('main.list_patients') }}">
                                     <span class="glyphicon glyphicon-user" aria-hidden="true"></span> 
                                 Пациенты</a></li>
                             <li role="separator" class="divider"></li>
-                            <li><a href="{{ url_for('list_holidays') }}">
+                            <li><a href="{{ url_for('main.list_holidays') }}">
                                     <span class="glyphicon glyphicon-calendar" aria-hidden="true"></span> 
                                 Календарь</a></li>
                         </ul>
@@ -50,16 +50,16 @@
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     {% if current_user.is_anonymous %}
-                    <li><a href="{{ url_for('login') }}">
+                    <li><a href="{{ url_for('auth.login') }}">
                             <span class="glyphicon glyphicon-log-in" aria-hidden="true"></span> 
                         Войти</a></li>
                     {% else %}
                         {% if  current_user.username == 'Admin' %}
-                        <li><a href="{{ url_for('list_users') }}">
+                        <li><a href="{{ url_for('auth.list_users') }}">
                                 <span class="glyphicon glyphicon-user" aria-hidden="true"></span> 
                                 Пользователи</a></li>
                         {% endif %}
-                    <li><a href="{{ url_for('logout') }}">
+                    <li><a href="{{ url_for('auth.logout') }}">
                             <span class="glyphicon glyphicon-log-out" aria-hidden="true"></span> 
                         Выйти</a></li>
                     {% endif %}

@@ -2,7 +2,7 @@
 
 {% block app_content %}
     <h1>Справочник пациентов</h1>
-    <p><a href="{{ url_for('add_patient') }}">Добавить пациента</a></p>
+    <p><a href="{{ url_for('main.add_patient') }}">Добавить пациента</a></p>
     <table class="table table-condensed table-striped">
         <thead>
             <tr>
@@ -15,12 +15,12 @@
         <tbody>
             {% for patient in patients %}
             <tr>
-                <td><a href="{{ url_for('edit_patient', id = patient.id) }}">
+                <td><a href="{{ url_for('main.edit_patient', id = patient.id) }}">
                         <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
                     </a>
                 </td>
                 <td>
-                    <a href="{{ url_for('patient', id = patient.id) }}">
+                    <a href="{{ url_for('main.patient', id = patient.id) }}">
                     {{ patient.last_name }} {{ patient.first_name }} {{ patient.middle_name }}
                     </a>
                 </td>

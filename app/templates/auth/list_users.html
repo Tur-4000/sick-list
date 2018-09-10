@@ -1,0 +1,39 @@
+{% extends "layout.html" %}
+
+{% block app_content %}
+    <h1>Пользователи</h1>
+    <p><a href="{{ url_for('auth.register') }}">Добавить пользователя</a></p>
+    <table class="table table-condensed table-striped">
+        <thead>
+            <tr>
+                <th></th>
+                <th>Имя пользователя</th>
+                <th>eMail</th>
+                <th>Сотрудник</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td><a href="{{ url_for('auth.edit_profile', id=user.id) }}">
+                        <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+                    </a>
+                </td>
+                <td>
+                    <a href="{{ url_for('auth.user', username=user.username) }}">
+                    {{ user.username }}
+                    </a>
+                </td>
+                <td>{{ user.email }}</td>
+                <td>
+                    {% if user.user.last_name %}
+                        {{ user.user.last_name + " " + 
+                           user.user.first_name + " " + 
+                           user.user.middle_name }}
+                    {% endif %}
+                </td> 
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

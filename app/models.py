@@ -1,11 +1,11 @@
-from app import app, db
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask import current_app, request, url_for
 from flask_login import UserMixin
-from app import login
+from . import db, login_manager
 
 
-@login.user_loader
+@login_manager.user_loader
 def load_user(id):
     return User.query.get(int(id))
 

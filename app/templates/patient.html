@@ -7,7 +7,7 @@
         <b>Дата рождения:</b> {{ moment(patient.birth_year).format('L') }}<br>
         <b>Пол:</b> {% if patient.sex == 'man' %}мужской{% else %}женский{% endif %}<br>
     </p>    
-    <p><a href="{{ url_for('edit_patient', id = patient.id) }}">Редактировать информацию о пациенте</a></p>
+    <p><a href="{{ url_for('main.edit_patient', id = patient.id) }}">Редактировать информацию о пациенте</a></p>
     <h3>Больничные листы</h3>
     <table class="table table-condensed">
         <thead>
@@ -25,7 +25,7 @@
             {% for list in patient.sick_lists %}
             <tr>
                 <td>
-                    <a href="{{ url_for('edit_list', id=list.id) }}">
+                    <a href="{{ url_for('main.edit_list', id=list.id) }}">
                         <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
                     </a>
                 </td>
