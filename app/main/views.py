@@ -390,17 +390,17 @@ def edit_checkin(id, type_checkin):
         flash('Совместный осмотр {} изменён'.format(form.checkin_date.data))
         return redirect(url_for('main.index'))
     elif request.method == 'GET':
-        list = Lists.query.filter_by(id=int(id)).first_or_404()
+        checkins_list = Lists.query.filter_by(id=int(id)).first_or_404()
         form.id.data = id
         if type_checkin == 'first':
-            form.checkin_date.data = list.first_checkin_fact
-            form.checkin_note.data = list.first_checkin_note
+            form.checkin_date.data = checkins_list.first_checkin_fact
+            form.checkin_note.data = checkins_list.first_checkin_note
         elif type_checkin == 'second':
-            form.checkin_date.data = list.second_checkin_fact
-            form.checkin_note.data = list.second_checkin_note
+            form.checkin_date.data = checkins_list.second_checkin_fact
+            form.checkin_note.data = checkins_list.second_checkin_note
         elif type_checkin == 'vkk':
-            form.checkin_date.data = list.vkk_fact
-            form.checkin_note.data = list.vkk_note
+            form.checkin_date.data = checkins_list.vkk_fact
+            form.checkin_note.data = checkins_list.vkk_note
     return render_template('checkin.html',
                            form=form,
                            title='Добавить совместный осмотр')
