@@ -1,13 +1,17 @@
-from datetime import datetime
-from werkzeug.security import generate_password_hash, check_password_hash
-from flask import current_app, request, url_for
+from datetime import datetime, timedelta
+
 from flask_login import UserMixin
+from numpy import is_busday
+from werkzeug.security import generate_password_hash, check_password_hash
+
+from config import Config
 from . import db, login_manager
 
 
 @login_manager.user_loader
 def load_user(id):
     return User.query.get(int(id))
+
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -84,3 +88,17 @@ class Holiday(db.Model):
 
     def __repr__(self):
         return '<{} - {}>'.format(self.holiday_date, self.holiday_name)
+
+    @staticmethod
+    def list_holidays():
+        holidays_dates = Holiday.query.with_entities(
+            Holiday.holiday_date).all()
+        holidays = []
+        for date in holidays_dates:
+            holidays += [date.holiday_date.strftime("%Y-%m-%d")]
+        return holidays
+
+# def is_work_day(checkinday, holiday):
+#     while not is_busday(checkinday, weekmask=Config.WORK_DAYS, holidays=holiday):
+#         checkinday = checkinday - timedelta(days=1)
+#     return checkinday
