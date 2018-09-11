@@ -18,17 +18,17 @@ def before_request():
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
         if user is None or not user.check_password(form.password.data):
             flash('Неправильное имя или пароль')
-            return redirect(url_for('login'))
+            return redirect(url_for('auth.login'))
         login_user(user, remember=form.remember_me.data)
         next_page = request.args.get('next')
         if not next_page or url_parse(next_page).netloc != '':
-            next_page = url_for('index')
+            next_page = url_for('main.index')
         return redirect(next_page)
     return render_template('auth/login.html', title='Войти', form=form)
 
@@ -36,14 +36,14 @@ def login():
 @auth.route('/logout')
 def logout():
     logout_user()
-    return redirect(url_for('index'))
+    return redirect(url_for('main.index'))
 
 
 @auth.route('/register', methods=['GET', 'POST'])
 @login_required
 def register():
     if current_user.username != 'Admin':
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
     form = RegistrationForm()
     form.employe.choices = [(e.id, e.last_name + ' ' + e.first_name + ' ' + e.middle_name)
                                 for e in Employes.query.order_by('last_name')]
@@ -53,7 +53,7 @@ def register():
         db.session.add(user)
         db.session.commit()
         flash('Пользователь {} добавлен'.format(form.username.data))
-        return redirect(url_for('register'))
+        return redirect(url_for('auth.register'))
     return render_template('auth/register.html', title='Регистрация', form=form)
 
 
@@ -61,12 +61,12 @@ def register():
 @login_required
 def del_user(id):
     if current_user.username != 'Admin':
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
     user = User.query.filter_by(id=id).first_or_404()
     db.session.delete(user)
     db.session.commit()
     flash('Пользователь {} удалён'.format(user.username))
-    return redirect(url_for('list_users'))
+    return redirect(url_for('auth.list_users'))
 
 
 @auth.route('/user/<username>')
@@ -97,7 +97,7 @@ def edit_profile(id):
         user.employe_id = request.form['employe']
         db.session.commit()
         flash('Изменения сохранены')
-        return redirect(url_for('edit_profile', id=form.id.data))
+        return redirect(url_for('auth.edit_profile', id=form.id.data))
     elif request.method == 'GET':
         form.employe.default = user.employe_id
         form.process()
