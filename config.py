@@ -20,6 +20,8 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_RECORD_QUERIES = True
 
+    SSL_REDIRECT = False
+
     # Рабочие дни недели начиная с понедельника. 1 - рабочий день, 0 - выходной
     WORK_DAYS = '1111110'
 
@@ -69,6 +71,15 @@ class ProductionConfig(Config):
         app.logger.addHandler(mail_handler)
 
 
+class HerokuConfig(ProductionConfig):
+    SSL_REDIRECT = True if os.environ.get('DYNO') else False
+
+    @classmethod
+    def init_app(cls, app):
+        ProductionConfig.init_app(app)
+
+        from werkzeug.contrib.fixers import ProxyFix
+        app.wsgi_app = ProxyFix(app.wsgi_app)
 
 
 config = {
@@ -78,5 +89,3 @@ config = {
 
     'default': DevelopmentConfig
 }
-
-
