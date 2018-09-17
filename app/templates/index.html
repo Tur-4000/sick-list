@@ -8,17 +8,19 @@
             <tr>
                 <th rowspan="2"></th>
                 <th rowspan="2" style="vertical-align: middle">№ б/л</th>
-                <th rowspan="2" style="vertical-align: middle">б/л открыт</th>
+                <th style="vertical-align: middle">б/л открыт</th>
                 <th rowspan="2" style="vertical-align: middle">Пациент (ФИО)</th>
-                <th rowspan="2" style="vertical-align: middle">Доктор</th>
+                <th rowspan="2" style="vertical-align: middle">Лечащий врач</th>
                 <th rowspan="2" style="vertical-align: middle">Диагноз</th>
                 <th>1-й СО план</th>
                 <th>2-й СО план</th>
                 <th>ВКК план</th>
                 <th rowspan="2" style="vertical-align: middle">Статус б/л</th>
+                <th rowspan="2" style="vertical-align: middle">Примечание</th>
                 <th rowspan="2" style="vertical-align: middle">б/л закрыт</th>
             </tr>
 			<tr>
+                <th style="vertical-align: middle">Кем открыт</th>
 				<th>1-й СО факт</th>                
 				<th>2-й СО факт</th>                
 				<th>ВКК факт</th>                
@@ -33,7 +35,7 @@
                     </a>
                 </td>
                 <td rowspan="2">{{ list.sick_list_number }}</td>
-                <td rowspan="2">{{ moment(list.start_date).format('L') }}</td>
+                <td>{{ moment(list.start_date).format('L') }}</td>
                 <td rowspan="2">
                     <a href="{{ url_for('main.patient', id = list.patient.id) }}">
                     {{ list.patient.last_name + " " + list.patient.first_name + " " + list.patient.middle_name }}
@@ -63,7 +65,12 @@
                     {% elif list.status == 'relocated' %}
                     переведен
                     {% endif %}
-                </td>                
+                </td>
+                <td rowspan="2">
+                    {% if list.status_note %}
+                    {{ list.status_note }}
+                    {% endif %}
+                </td>
                 <td rowspan="2">
                     {% if list.end_date %}
                     {{ list.end_date }}
@@ -71,6 +78,14 @@
                 </td>
             </tr>
 			<tr>
+                <td>
+                    {% if list.open_list_doctor.last_name %}
+                    {{ list.open_list_doctor.last_name + " " +
+                        list.open_list_doctor.first_name[0] + ". " +
+                        list.open_list_doctor.middle_name[0] }}
+                    {% endif %}
+                </td>
+
 				<td>
                     {% if not list.first_checkin_fact %}
                     <a href="{{ url_for('main.add_checkin', id=list.id, type_checkin='first') }}">

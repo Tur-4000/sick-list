@@ -66,12 +66,14 @@ class EditSicklistForm(FlaskForm):
     diacrisis = StringField('Диагноз', validators=[DataRequired()])
     doctor = SelectField('Лечащий врач', coerce=int)
     status = SelectField('Статус', choices=[('open', 'Открыт'), ('end', 'Закрыт'), ('relocated', 'перемещён')], coerce=str)
+    status_note = TextAreaField('Примечание', validators=[Length(min=0, max=255)])
     submit = SubmitField('Сохранить')
 
 
 class CloseListForm(FlaskForm):
     id = HiddenField('id')
     end_date = DateField('Дата закрытия больничного', validators=[DataRequired()])
+    status_note = TextAreaField('Примечание', validators=[Length(min=0, max=255)])
     submit = SubmitField('Закрыть больничный')
 
 

@@ -38,7 +38,7 @@ class Employes(db.Model):
     middle_name = db.Column(db.String(64), index=True)
     job_title = db.Column(db.String(254))
     user = db.relationship('User', backref='user', lazy='dynamic')
-    doctor = db.relationship('Lists', backref='doctor', lazy='dynamic')
+#    lists = db.relationship('Lists', backref='doctor', lazy='dynamic')
 
     def __repr__(self):
         return '<Сотрудник: {} {} {}>'.format(self.last_name, self.first_name, self.middle_name)
@@ -61,6 +61,7 @@ class Lists(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     sick_list_number = db.Column(db.String(32), index=True, unique=True)
     start_date = db.Column(db.Date)
+    doctor_who_open_list = db.Column(db.Integer, db.ForeignKey('employes.id'))
     first_checkin = db.Column(db.Date)
     first_checkin_fact = db.Column(db.Date)
     first_checkin_note = db.Column(db.String(255))
@@ -72,9 +73,12 @@ class Lists(db.Model):
     vkk_note = db.Column(db.String(255))
     end_date = db.Column(db.Date)
     status = db.Column(db.String(32))
+    status_note = db.Column(db.String(255))
     diacrisis = db.Column(db.String(255))
     patient_id = db.Column(db.Integer, db.ForeignKey('patients.id'))
     doctor_id = db.Column(db.Integer, db.ForeignKey('employes.id'))
+    doctor = db.relationship('Employes', foreign_keys=[doctor_id])
+    open_list_doctor = db.relationship('Employes', foreign_keys=[doctor_who_open_list])
 
     def __repr__(self):
         return '<Больничный лист № {}>'.format(self.sick_list_number)

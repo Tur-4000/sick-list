@@ -106,11 +106,12 @@ def edit_employe(id):
     return render_template('edit_employe.html', title='Редактирование сотрудника', form=form)
 
 
-@main.route('/employe/<id>')
+@main.route('/employe/<int:id>')
 @login_required
 def employe(id):
     employe = Employes.query.filter_by(id=id).first_or_404()
-    return render_template('employe.html', employe=employe)
+    lists = Lists.query.filter_by(doctor_id=id).all()
+    return render_template('employe.html', employe=employe, lists=lists)
 
 
 @main.route('/list_patients')
@@ -196,6 +197,7 @@ def add_sicklist():
         vkk_date = is_work_day(vkk_date, Holiday.list_holidays())
         sicklist = Lists(sick_list_number=form.sick_list_number.data,
                          start_date=form.start_date.data,
+                         doctor_who_open_list=request.form['doctor'],
                          first_checkin=first_checkin_date,
                          second_checkin=second_checkin_date,
                          vkk=vkk_date,
@@ -239,6 +241,7 @@ def edit_list(id):
                                {'sick_list_number': form.sick_list_number.data,
                                 'start_date': form.start_date.data,
                                 'status': request.form['status'],
+                                'status_note': form.status_note.data,
                                 'diacrisis': form.diacrisis.data,
                                 'patient_id': request.form['patient'],
                                 'doctor_id': request.form['doctor'],
@@ -257,6 +260,7 @@ def edit_list(id):
         form.sick_list_number.data = sicklist.sick_list_number
         form.start_date.data = sicklist.start_date
         form.diacrisis.data = sicklist.diacrisis
+        form.status_note.data = sicklist.status_note
     return render_template('edit_list.html', form=form, sicklist=sicklist)
 
 
@@ -268,10 +272,11 @@ def close_list(id):
     if form.validate_on_submit():
         Lists.query.filter_by(id=int(form.id.data)).update(
                                {'end_date': form.end_date.data,
+                                'status_note': form.status_note.data,
                                 'status': 'end'})
         db.session.commit()
         flash('Больничный лист № {} закрыт'.format(sicklist.sick_list_number))
-        return redirect(url_for('main.edit_list', id = form.id.data))
+        return redirect(url_for('main.edit_list', id=form.id.data))
     elif request.method == 'GET':
         form.id.data = sicklist.id
         form.end_date.data = sicklist.end_date
