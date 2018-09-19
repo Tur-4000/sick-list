@@ -5,7 +5,7 @@
     <hr>
     <p>
         <b>Дата рождения:</b> {{ moment(patient.birth_year).format('L') }}<br>
-        <b>Пол:</b> {% if patient.sex == 'man' %}мужской{% else %}женский{% endif %}<br>
+        <b>Пол:</b> {% if not patient.sex %}мужской{% else %}женский{% endif %}<br>
     </p>    
     <p><a href="{{ url_for('main.edit_patient', id = patient.id) }}">Редактировать информацию о пациенте</a></p>
     <h3>Больничные листы</h3>
