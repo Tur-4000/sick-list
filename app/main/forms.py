@@ -28,7 +28,7 @@ class AddPatientForm(FlaskForm):
     first_name = StringField('Имя', validators=[DataRequired()])
     middle_name = StringField('Отчество', validators=[DataRequired()])
     birth_year = DateField('Дата рождения', validators=[DataRequired()])
-    sex = SelectField('Пол', choices=[('man', 'Мужской'), ('woman', 'Женский')])
+    sex = SelectField('Пол', choices=[('0', 'Мужской'), ('1', 'Женский')])
     submit = SubmitField('Сохранить')
 
 
@@ -38,7 +38,7 @@ class EditPatientForm(FlaskForm):
     first_name = StringField('Имя', validators=[DataRequired()])
     middle_name = StringField('Отчество', validators=[DataRequired()])
     birth_year = DateField('Дата рождения', validators=[DataRequired()])
-    sex = SelectField('Пол', choices=[('man', 'Мужской'), ('woman', 'Женский')], coerce=str)
+    sex = SelectField('Пол', choices=[('0', 'Мужской'), ('1', 'Женский')], coerce=str)
     submit = SubmitField('Сохранить')
 
 
