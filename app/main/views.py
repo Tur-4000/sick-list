@@ -83,7 +83,7 @@ def add_employe():
     return render_template('add_employe.html', title='Добавление сотрудника', form=form)
 
 
-@main.route('/edit_employe/<id>', methods=['GET', 'POST'])
+@main.route('/edit_employe/<int:id>', methods=['GET', 'POST'])
 @login_required
 def edit_employe(id):
     employe = Employes.query.filter_by(id=id).first_or_404()
@@ -142,14 +142,14 @@ def add_patient():
     return render_template('add_patient.html', title='Добавление пациента', form=form)
 
 
-@main.route('/patient/<id>')
+@main.route('/patient/<int:id>')
 @login_required
 def patient(id):
     patient = Patients.query.filter_by(id=id).first_or_404()
     return render_template('patient.html', patient=patient)
 
 
-@main.route('/edit_patient/<id>', methods=['GET', 'POST'])
+@main.route('/edit_patient/<int:id>', methods=['GET', 'POST'])
 @login_required
 def edit_patient(id):
     patient = Patients.query.filter_by(id=id).first_or_404()
@@ -212,7 +212,7 @@ def add_sicklist():
     return render_template('add_sicklist.html', title='Добавление нового больничного листа', form=form)
 
 
-@main.route('/edit_list/<id>', methods=['GET', 'POST'])
+@main.route('/edit_list/<int:id>', methods=['GET', 'POST'])
 @login_required
 def edit_list(id):
     sicklist = Lists.query.filter_by(id=id).first_or_404()
@@ -264,7 +264,7 @@ def edit_list(id):
     return render_template('edit_list.html', form=form, sicklist=sicklist)
 
 
-@main.route('/close_list/<id>', methods=['GET', 'POST'])
+@main.route('/close_list/<int:id>', methods=['GET', 'POST'])
 @login_required
 def close_list(id):
     sicklist = Lists.query.filter_by(id=id).first_or_404()
@@ -306,7 +306,7 @@ def add_holiday():
     return render_template('holiday.html', form=form, title='Добавить выходной')
 
 
-@main.route('/edit_holiday/<id>', methods=['GET', 'POST'])
+@main.route('/edit_holiday/<int:id>', methods=['GET', 'POST'])
 @login_required
 def edit_holiday(id):
     holiday = Holiday.query.filter_by(id=id).first_or_404()
@@ -326,10 +326,21 @@ def edit_holiday(id):
         form.holiday_name.data = holiday.holiday_name
     return render_template('holiday.html',
                            form=form,
+                           holiday=holiday,
                            title='Редактировать выходной')
 
 
-@main.route('/add_checkin/<id>/<type_checkin>', methods=['GET', 'POST'])
+@main.route('/del_holiday/<int:id>')
+@login_required
+def del_holiday(id):
+    holiday = Holiday.query.filter_by(id=id).first_or_404()
+    db.session.delete(holiday)
+    db.session.commit()
+    flash(f'Выходной {holiday.holiday_date} {holiday.holiday_name}, удалён.')
+    return redirect(url_for('main.list_holidays'))
+
+
+@main.route('/add_checkin/<int:id>/<type_checkin>', methods=['GET', 'POST'])
 @login_required
 def add_checkin(id, type_checkin):
     form = CheckinForm()
@@ -365,7 +376,7 @@ def add_checkin(id, type_checkin):
                            title='Добавить совместный осмотр')
 
 
-@main.route('/edit_checkin/<id>/<type_checkin>', methods=['GET', 'POST'])
+@main.route('/edit_checkin/<int:id>/<type_checkin>', methods=['GET', 'POST'])
 @login_required
 def edit_checkin(id, type_checkin):
     form = CheckinForm()

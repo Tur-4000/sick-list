@@ -57,7 +57,7 @@ def register():
     return render_template('auth/register.html', title='Регистрация', form=form)
 
 
-@auth.route('/del_user/<id>')
+@auth.route('/del_user/<int:id>')
 @login_required
 def del_user(id):
     if current_user.username != 'Admin':
@@ -84,7 +84,7 @@ def list_users():
     return render_template('auth/list_users.html', users=users)
 
 
-@auth.route('/edit_profile/<id>', methods=['GET', 'POST'])
+@auth.route('/edit_profile/<int:id>', methods=['GET', 'POST'])
 @login_required
 def edit_profile(id):
     user = User.query.filter_by(id=id).first_or_404()

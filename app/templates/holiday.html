@@ -6,9 +6,15 @@
     <div class="row">
         <div class="col-md-4">
             {{ wtf.quick_form(form) }}
-            <br><a href="{{ url_for('main.list_holidays') }}">
+            <br>
+            <a href="{{ url_for('main.list_holidays') }}" class="btn btn-primary">
                 <span class="glyphicon glyphicon-share" aria-hidden="true"></span>     
                 Назад к списку выходных</a>
+
+            <a href="{{ url_for('main.del_holiday', id=holiday.id) }}" class="btn btn-danger">
+                <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                Удалить выходной</a>
         </div>
+        <div></div>
     </div>
 {% endblock %}

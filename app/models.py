@@ -78,7 +78,8 @@ class Lists(db.Model):
     patient_id = db.Column(db.Integer, db.ForeignKey('patients.id'))
     doctor_id = db.Column(db.Integer, db.ForeignKey('employes.id'))
     doctor = db.relationship('Employes', foreign_keys=[doctor_id])
-    open_list_doctor = db.relationship('Employes', foreign_keys=[doctor_who_open_list])
+    open_list_doctor = db.relationship('Employes',
+                                       foreign_keys=[doctor_who_open_list])
 
     def __repr__(self):
         return '<Больничный лист № {}>'.format(self.sick_list_number)

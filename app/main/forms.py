@@ -60,20 +60,28 @@ class AddSicklistForm(FlaskForm):
 
 class EditSicklistForm(FlaskForm):
     id = HiddenField('id')
-    sick_list_number = StringField('Номер больничного', validators=[DataRequired()])
-    start_date = DateField('Дата открытия', format='%Y-%m-%d', validators=[DataRequired()])
+    sick_list_number = StringField('Номер больничного',
+                                   validators=[DataRequired()])
+    start_date = DateField('Дата открытия',
+                           format='%Y-%m-%d',
+                           validators=[DataRequired()])
     patient = SelectField('Пациент', coerce=int)
     diacrisis = StringField('Диагноз', validators=[DataRequired()])
     doctor = SelectField('Лечащий врач', coerce=int)
-    status = SelectField('Статус', choices=[('open', 'Открыт'), ('end', 'Закрыт'), ('relocated', 'перемещён')], coerce=str)
-    status_note = TextAreaField('Примечание', validators=[Length(min=0, max=255)])
+    status = SelectField('Статус', choices=[('open', 'Открыт'),
+                                            ('relocated', 'перемещён')],
+                         coerce=str)
+    status_note = TextAreaField('Примечание',
+                                validators=[Length(min=0, max=255)])
     submit = SubmitField('Сохранить')
 
 
 class CloseListForm(FlaskForm):
     id = HiddenField('id')
-    end_date = DateField('Дата закрытия больничного', validators=[DataRequired()])
-    status_note = TextAreaField('Примечание', validators=[Length(min=0, max=255)])
+    end_date = DateField('Дата закрытия больничного',
+                         validators=[DataRequired()])
+    status_note = TextAreaField('Примечание',
+                                validators=[Length(min=0, max=255)])
     submit = SubmitField('Закрыть больничный')
 
 
