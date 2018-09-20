@@ -5,7 +5,7 @@
     <h1>Редактировать информацию о пациенте</h1>
     <div class="row">
         <div class="col-md-4">
-            {{ wtf.quick_form(form) }}
+            {{ wtf.quick_form(form, button_map={'submit': 'success'}) }}
             <br>
             <a href="{{ url_for('main.list_patients') }}" class="btn btn-primary">
                 <span class="glyphicon glyphicon-share" aria-hidden="true"></span> 

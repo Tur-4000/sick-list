@@ -14,7 +14,7 @@
             <p><b>Лечащий врач: </b>{{ sicklist.doctor.last_name + " " + 
                                        sicklist.doctor.first_name + " " + 
                                        sicklist.doctor.middle_name }}</p>
-            {{ wtf.quick_form(form) }}
+            {{ wtf.quick_form(form, button_map={'submit': 'success'}) }}
             <br>
             <br>
             <a href="{{ url_for('main.all') }}" class="btn btn-primary">

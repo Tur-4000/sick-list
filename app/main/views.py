@@ -303,7 +303,9 @@ def add_holiday():
         db.session.commit()
         flash('Выходной {} добавлен'.format(form.holiday_date.data))
         return redirect(url_for('main.add_holiday'))
-    return render_template('holiday.html', form=form, title='Добавить выходной')
+    return render_template('add_holiday.html',
+                           form=form,
+                           title='Добавить выходной')
 
 
 @main.route('/edit_holiday/<int:id>', methods=['GET', 'POST'])
