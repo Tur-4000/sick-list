@@ -44,9 +44,8 @@ class Employes(db.Model):
     first_name = db.Column(db.String(64), index=True)
     middle_name = db.Column(db.String(64), index=True)
     job_title = db.Column(db.String(254))
-    user = db.relationship('User', backref='user', lazy='dynamic')
-#    lists = db.relationship('Lists', backref='doctor', lazy='dynamic')
     dismissed = db.Column(db.Boolean, default=False, index=True)
+    user = db.relationship('User', backref='user', lazy='dynamic')
 
     def __repr__(self):
         return '<Сотрудник: {} {} {}>'.format(self.last_name, self.first_name, self.middle_name)

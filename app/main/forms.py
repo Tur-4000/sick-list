@@ -18,8 +18,8 @@ class EditEmployeForm(FlaskForm):
     last_name = StringField('Фамилия')
     first_name = StringField('Имя')
     middle_name = StringField('Отчество')
-    dismissed = BooleanField('Уволен')
     job_title = StringField('Должность')
+    dismissed = BooleanField('Заблокировать')
 
     submit = SubmitField('Сохранить')
 

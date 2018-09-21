@@ -62,7 +62,7 @@ def list_employes():
                     Employes.first_name,
                     Employes.middle_name,
                     Employes.job_title,
-                    Employes.active,
+                    Employes.dismissed,
                     User.username).order_by(
                         Employes.last_name).all()
     return render_template('employes.html', title='Сотрудники', employes=employes)
@@ -81,7 +81,7 @@ def add_employe():
         db.session.add(employe)
         db.session.commit()
         flash('Сотрудник {} {} {} добавлен'.format(form.last_name.data, form.first_name.data, form.middle_name.data))
-        return redirect(url_for('main.add_employe'))
+        return redirect(url_for('main.list_employes'))
     return render_template('add_employe.html', title='Добавление сотрудника', form=form)
 
 
@@ -99,7 +99,7 @@ def edit_employe(id):
                                      'dismissed': form.dismissed.data})
         db.session.commit()
         flash('Изменения сохранены')
-        return redirect(url_for('main.edit_employe', id=form.id.data))
+        return redirect(url_for('main.list_employes', id=form.id.data))
     elif request.method == 'GET':
         form.id.data = employe.id
         form.last_name.data = employe.last_name
@@ -142,7 +142,7 @@ def add_patient():
                                     form.first_name.data,
                                     form.middle_name.data,
                                     form.birth_year.data))
-        return redirect(url_for('main.add_patient'))
+        return redirect(url_for('main.list_patients'))
     return render_template('add_patient.html', title='Добавление пациента', form=form)
 
 
@@ -167,7 +167,7 @@ def edit_patient(id):
                                      'sex': request.form['sex']})
         db.session.commit()
         flash('Изменения сохранены')
-        return redirect(url_for('main.edit_patient', id=form.id.data))
+        return redirect(url_for('main.list_patients', id=form.id.data))
     elif request.method == 'GET':
         form.id.data = patient.id
         form.last_name.data = patient.last_name
@@ -191,7 +191,7 @@ def add_sicklist():
     form.patient.choices = [(p.id, " ".join([p.last_name, p.first_name, p.middle_name]))
                                 for p in Patients.query.order_by('last_name')]
     form.doctor.choices = [(e.id, " ".join([e.last_name, e.first_name, e.middle_name]))
-                                for e in Employes.query.order_by('last_name')]
+                                for e in Employes.query.filter_by(dismissed=False).order_by('last_name')]
     if form.validate_on_submit():
         first_checkin_date = form.start_date.data + timedelta(days=9)
         first_checkin_date = is_work_day(first_checkin_date, Holiday.list_holidays())
@@ -212,7 +212,7 @@ def add_sicklist():
         db.session.add(sicklist)
         db.session.commit()
         flash('Больничный лист № {} добавлен'.format(form.sick_list_number.data))
-        return redirect(url_for('main.add_sicklist'))
+        return redirect(url_for('main.all'))
     return render_template('add_sicklist.html', title='Добавление нового больничного листа', form=form)
 
 
@@ -224,7 +224,7 @@ def edit_list(id):
     form.patient.choices = [(p.id, p.last_name + ' ' + p.first_name + ' ' + p.middle_name)
                                 for p in Patients.query.order_by('last_name')]
     form.doctor.choices = [(e.id, e.last_name + ' ' + e.first_name + ' ' + e.middle_name)
-                                for e in Employes.query.order_by('last_name')]
+                                for e in Employes.query.filter_by(dismissed=False).order_by('last_name')]
     if form.validate_on_submit():
         first_checkin_date = form.start_date.data + timedelta(days=9)
         first_checkin_date = is_work_day(first_checkin_date, Holiday.list_holidays())
@@ -254,7 +254,7 @@ def edit_list(id):
                                 'vkk': vkk_date})
         db.session.commit()
         flash('Изменения сохранены')
-        return redirect(url_for('main.edit_list', id = form.id.data))
+        return redirect(url_for('main.all', id = form.id.data))
     elif request.method == 'GET':
         form.status.default = sicklist.status
         form.patient.default = sicklist.patient.id
@@ -280,7 +280,7 @@ def close_list(id):
                                 'status': 'end'})
         db.session.commit()
         flash('Больничный лист № {} закрыт'.format(sicklist.sick_list_number))
-        return redirect(url_for('main.edit_list', id=form.id.data))
+        return redirect(url_for('main.all', id=form.id.data))
     elif request.method == 'GET':
         form.id.data = sicklist.id
         form.end_date.data = sicklist.end_date
@@ -306,7 +306,7 @@ def add_holiday():
         db.session.add(holiday)
         db.session.commit()
         flash('Выходной {} добавлен'.format(form.holiday_date.data))
-        return redirect(url_for('main.add_holiday'))
+        return redirect(url_for('main.list_holidays'))
     return render_template('add_holiday.html',
                            form=form,
                            title='Добавить выходной')
