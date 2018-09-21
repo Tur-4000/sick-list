@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, HiddenField, SelectField, TextAreaField
+from wtforms import StringField, SubmitField, HiddenField, SelectField, TextAreaField, BooleanField
 from wtforms.fields.html5 import DateField
 from wtforms.validators import DataRequired, ValidationError, Length
 from ..models import Lists, Holiday
@@ -18,7 +18,9 @@ class EditEmployeForm(FlaskForm):
     last_name = StringField('Фамилия')
     first_name = StringField('Имя')
     middle_name = StringField('Отчество')
+    dismissed = BooleanField('Уволен')
     job_title = StringField('Должность')
+
     submit = SubmitField('Сохранить')
 
 

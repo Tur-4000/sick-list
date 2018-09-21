@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 
 from flask_login import UserMixin
 from numpy import is_busday
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from config import Config
@@ -11,6 +12,12 @@ from . import db, login_manager
 @login_manager.user_loader
 def load_user(id):
     return User.query.get(int(id))
+
+
+class Permission:
+    READ = 1
+    WRITE = 2
+    ADMIN = 4
 
 
 class User(UserMixin, db.Model):
@@ -39,6 +46,7 @@ class Employes(db.Model):
     job_title = db.Column(db.String(254))
     user = db.relationship('User', backref='user', lazy='dynamic')
 #    lists = db.relationship('Lists', backref='doctor', lazy='dynamic')
+    dismissed = db.Column(db.Boolean, default=False, index=True)
 
     def __repr__(self):
         return '<Сотрудник: {} {} {}>'.format(self.last_name, self.first_name, self.middle_name)

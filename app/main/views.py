@@ -62,6 +62,7 @@ def list_employes():
                     Employes.first_name,
                     Employes.middle_name,
                     Employes.job_title,
+                    Employes.active,
                     User.username).order_by(
                         Employes.last_name).all()
     return render_template('employes.html', title='Сотрудники', employes=employes)
@@ -75,7 +76,8 @@ def add_employe():
         employe = Employes(last_name=form.last_name.data,
                            first_name=form.first_name.data,
                            middle_name=form.middle_name.data,
-                           job_title=form.job_title.data)
+                           job_title=form.job_title.data,
+                           dismissed=False)
         db.session.add(employe)
         db.session.commit()
         flash('Сотрудник {} {} {} добавлен'.format(form.last_name.data, form.first_name.data, form.middle_name.data))
@@ -93,7 +95,8 @@ def edit_employe(id):
                                     {'last_name': form.last_name.data,
                                      'first_name': form.first_name.data,
                                      'middle_name': form.middle_name.data,
-                                     'job_title': form.job_title.data})
+                                     'job_title': form.job_title.data,
+                                     'dismissed': form.dismissed.data})
         db.session.commit()
         flash('Изменения сохранены')
         return redirect(url_for('main.edit_employe', id=form.id.data))
@@ -103,6 +106,7 @@ def edit_employe(id):
         form.first_name.data = employe.first_name
         form.middle_name.data = employe.middle_name
         form.job_title.data = employe.job_title
+        form.dismissed.data = employe.dismissed
     return render_template('edit_employe.html', title='Редактирование сотрудника', form=form)
 
 
