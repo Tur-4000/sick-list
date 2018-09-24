@@ -73,7 +73,7 @@
                 </td>
                 <td rowspan="2">
                     {% if list.end_date %}
-                    {{ list.end_date }}
+                    {{ moment(list.end_date).format('L') }}
                     {% endif %}
                 </td>
             </tr>

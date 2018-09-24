@@ -64,6 +64,12 @@ class Patients(db.Model):
         return '<Пациент {}>'.format(self.last_name)
 
 
+def is_work_day(checkinday, holiday):
+    while not is_busday(checkinday, weekmask=Config.WORK_DAYS, holidays=holiday):
+        checkinday = checkinday - timedelta(days=1)
+    return checkinday
+
+
 class Lists(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     sick_list_number = db.Column(db.String(32), index=True, unique=True)
@@ -110,7 +116,4 @@ class Holiday(db.Model):
             holidays += [date.holiday_date.strftime("%Y-%m-%d")]
         return holidays
 
-# def is_work_day(checkinday, holiday):
-#     while not is_busday(checkinday, weekmask=Config.WORK_DAYS, holidays=holiday):
-#         checkinday = checkinday - timedelta(days=1)
-#     return checkinday
+

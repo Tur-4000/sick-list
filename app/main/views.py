@@ -2,17 +2,15 @@ from datetime import datetime, date, timedelta
 
 from flask import render_template, flash, redirect, url_for, request
 from flask_login import current_user, login_required
-from numpy import is_busday
 
-from config import Config
 from . import main
 from .forms import AddEmployeForm, EditEmployeForm
 from .forms import AddHolidayForm, EditHolidayForm
 from .forms import AddPatientForm, EditPatientForm
-from .forms import AddSicklistForm, EditSicklistForm, CloseListForm
 from .forms import CheckinForm
+from .forms import CloseListForm, SicklistForm
 from .. import db
-from ..models import User, Patients, Lists, Employes, Holiday
+from ..models import User, Patients, Lists, Employes, Holiday, is_work_day
 
 
 @main.before_request
@@ -178,20 +176,10 @@ def edit_patient(id):
     return render_template('edit_patient.html', form=form, patient=patient)
 
 
-def is_work_day(checkinday, holiday):
-    while not is_busday(checkinday, weekmask=Config.WORK_DAYS, holidays=holiday):
-        checkinday = checkinday - timedelta(days=1)
-    return checkinday
-
-
 @main.route('/add_sicklist', methods=['GET', 'POST'])
 @login_required
 def add_sicklist():
-    form = AddSicklistForm()
-    form.patient.choices = [(p.id, " ".join([p.last_name, p.first_name, p.middle_name]))
-                                for p in Patients.query.order_by('last_name')]
-    form.doctor.choices = [(e.id, " ".join([e.last_name, e.first_name, e.middle_name]))
-                                for e in Employes.query.filter_by(dismissed=False).order_by('last_name')]
+    form = SicklistForm()
     if form.validate_on_submit():
         first_checkin_date = form.start_date.data + timedelta(days=9)
         first_checkin_date = is_work_day(first_checkin_date, Holiday.list_holidays())
@@ -220,11 +208,7 @@ def add_sicklist():
 @login_required
 def edit_list(id):
     sicklist = Lists.query.filter_by(id=id).first_or_404()
-    form = EditSicklistForm(obj=sicklist)
-    form.patient.choices = [(p.id, p.last_name + ' ' + p.first_name + ' ' + p.middle_name)
-                                for p in Patients.query.order_by('last_name')]
-    form.doctor.choices = [(e.id, e.last_name + ' ' + e.first_name + ' ' + e.middle_name)
-                                for e in Employes.query.filter_by(dismissed=False).order_by('last_name')]
+    form = SicklistForm()
     if form.validate_on_submit():
         first_checkin_date = form.start_date.data + timedelta(days=9)
         first_checkin_date = is_work_day(first_checkin_date, Holiday.list_holidays())
@@ -241,7 +225,7 @@ def edit_list(id):
             vkk_date = second_checkin_date + timedelta(days=10)
             vkk_date = is_work_day(vkk_date, Holiday.list_holidays())
 
-        Lists.query.filter_by(id=int(form.id.data)).update(
+        Lists.query.filter_by(id=form.id.data).update(
                                {'sick_list_number': form.sick_list_number.data,
                                 'start_date': form.start_date.data,
                                 'status': request.form['status'],
@@ -254,12 +238,11 @@ def edit_list(id):
                                 'vkk': vkk_date})
         db.session.commit()
         flash('Изменения сохранены')
-        return redirect(url_for('main.all', id = form.id.data))
+        return redirect(url_for('main.all'))
     elif request.method == 'GET':
-        form.status.default = sicklist.status
-        form.patient.default = sicklist.patient.id
-        form.doctor.default = sicklist.doctor.id
-        form.process()
+        form.status.data = sicklist.status
+        form.patient.data = sicklist.patient_id
+        form.doctor.data = sicklist.doctor_id
         form.id.data = sicklist.id
         form.sick_list_number.data = sicklist.sick_list_number
         form.start_date.data = sicklist.start_date
@@ -280,7 +263,7 @@ def close_list(id):
                                 'status': 'end'})
         db.session.commit()
         flash('Больничный лист № {} закрыт'.format(sicklist.sick_list_number))
-        return redirect(url_for('main.all', id=form.id.data))
+        return redirect(url_for('main.all'))
     elif request.method == 'GET':
         form.id.data = sicklist.id
         form.end_date.data = sicklist.end_date

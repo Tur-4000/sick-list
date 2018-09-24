@@ -2,7 +2,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, HiddenField, SelectField, TextAreaField, BooleanField
 from wtforms.fields.html5 import DateField
 from wtforms.validators import DataRequired, ValidationError, Length
-from ..models import Lists, Holiday
+from ..models import Lists, Holiday, Patients, Employes
 
 
 class AddEmployeForm(FlaskForm):
@@ -44,38 +44,30 @@ class EditPatientForm(FlaskForm):
     submit = SubmitField('Сохранить')
 
 
-class AddSicklistForm(FlaskForm):
+class SicklistForm(FlaskForm):
+    id = HiddenField('id')
     sick_list_number = StringField('Номер больничного', validators=[DataRequired()],
-                                    render_kw={'placeholder': 'Номер больничного'})
+                                   render_kw={'placeholder': 'Номер больничного'})
     start_date = DateField('Дата открытия', format='%Y-%m-%d', validators=[DataRequired()])
     patient = SelectField('Пациент', coerce=int)
     diacrisis = StringField('Диагноз', validators=[DataRequired()])
     doctor = SelectField('Лечащий врач', coerce=int)
-    status = SelectField('Статус', choices=[('open', 'Открыт'), ('end', 'Закрыт'), ('relocated', 'перемещён')], coerce=str)
-    submit = SubmitField('Сохранить')
-
-    def validate_sick_list_number(self, sick_list_number):
-        number = Lists.query.filter_by(sick_list_number=sick_list_number.data).first()
-        if number is not None:
-            raise ValidationError('Больничный с таким номером уже есть в базе')
-
-
-class EditSicklistForm(FlaskForm):
-    id = HiddenField('id')
-    sick_list_number = StringField('Номер больничного',
-                                   validators=[DataRequired()])
-    start_date = DateField('Дата открытия',
-                           format='%Y-%m-%d',
-                           validators=[DataRequired()])
-    patient = SelectField('Пациент', coerce=int)
-    diacrisis = StringField('Диагноз', validators=[DataRequired()])
-    doctor = SelectField('Лечащий врач', coerce=int)
-    status = SelectField('Статус', choices=[('open', 'Открыт'),
-                                            ('relocated', 'перемещён')],
-                         coerce=str)
+    status = SelectField('Статус', choices=[('open', 'Открыт'), ('relocated', 'перемещён')], coerce=str)
     status_note = TextAreaField('Примечание',
                                 validators=[Length(min=0, max=255)])
     submit = SubmitField('Сохранить')
+
+    def __init__(self, *args, **kwargs):
+        super(SicklistForm, self).__init__(*args, **kwargs)
+        self.patient.choices = [(p.id, " ".join([p.last_name, p.first_name, p.middle_name]))
+                                for p in Patients.query.order_by('last_name')]
+        self.doctor.choices = [(e.id, " ".join([e.last_name, e.first_name, e.middle_name]))
+                                for e in Employes.query.filter_by(dismissed=False).order_by('last_name')]
+
+    def validate_sick_list_number(self, field):
+        if field.data != self.sick_list_number.data and \
+                Lists.query.filter_by(sick_list_number=field.data).first():
+            raise ValidationError('Больничный с таким номером уже есть в базе')
 
 
 class CloseListForm(FlaskForm):
@@ -90,7 +82,7 @@ class CloseListForm(FlaskForm):
 class AddHolidayForm(FlaskForm):
     holiday_date = DateField('Дата выходного', validators=[DataRequired()])
     holiday_name = StringField('Описание', validators=[DataRequired()],
-                                    render_kw={'placeholder': 'Описание'})
+                               render_kw={'placeholder': 'Описание'})
     submit = SubmitField('Сохранить')
 
     def validate_holiday_date(self, holiday_date):
