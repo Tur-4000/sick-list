@@ -8,7 +8,7 @@ if os.path.exists(dotenv_path):
 import sys
 import click
 from app import create_app, db
-from app.models import User, Employes, Patients, Lists, Holiday
+from app.models import User, Employes, Patients, Lists, Holiday, Diacrisis
 from flask_migrate import Migrate, upgrade
 
 
@@ -19,7 +19,7 @@ migrate = Migrate(app, db)
 @app.shell_context_processor
 def make_shell_context():
     return {'db': db, 'User': User, 'Employes': Employes, 'Patients': Patients,
-            'Lists': Lists, 'Holiday': Holiday}
+            'Lists': Lists, 'Holiday': Holiday, 'Diacrisis': Diacrisis}
 
 
 @app.cli.command()

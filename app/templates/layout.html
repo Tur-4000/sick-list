@@ -35,13 +35,16 @@
                             <span class="glyphicon glyphicon-book" aria-hidden="true"></span> 
                             Справочники <span class="caret"></span></a>
                         <ul class="dropdown-menu">
+                            <li><a href="{{ url_for('main.list_patients') }}">
+                                    <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+                                Пациенты</a></li>
                             <li><a href="{{ url_for('main.list_employes') }}">
                                     <span class="glyphicon glyphicon-user" aria-hidden="true"></span> 
                                 Сотрудники</a></li>
-                            <li><a href="{{ url_for('main.list_patients') }}">
-                                    <span class="glyphicon glyphicon-user" aria-hidden="true"></span> 
-                                Пациенты</a></li>
                             <li role="separator" class="divider"></li>
+                            <li><a href="{{ url_for('main.list_diacrisis') }}">
+                                    <span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span>
+                                Диагнозы</a></li>
                             <li><a href="{{ url_for('main.list_holidays') }}">
                                     <span class="glyphicon glyphicon-calendar" aria-hidden="true"></span> 
                                 Календарь</a></li>

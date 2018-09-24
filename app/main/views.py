@@ -7,10 +7,10 @@ from . import main
 from .forms import AddEmployeForm, EditEmployeForm
 from .forms import AddHolidayForm, EditHolidayForm
 from .forms import AddPatientForm, EditPatientForm
-from .forms import CheckinForm
+from .forms import CheckinForm, DiacrisisForm
 from .forms import CloseListForm, SicklistForm
 from .. import db
-from ..models import User, Patients, Lists, Employes, Holiday, is_work_day
+from ..models import User, Patients, Lists, Employes, Holiday, is_work_day, Diacrisis
 
 
 @main.before_request
@@ -194,7 +194,7 @@ def add_sicklist():
                          second_checkin=second_checkin_date,
                          vkk=vkk_date,
                          status=request.form['status'],
-                         diacrisis=form.diacrisis.data,
+                         diacrisis=form.diacrisis.data, # TODO: заменить
                          patient_id=request.form['patient'],
                          doctor_id=request.form['doctor'])
         db.session.add(sicklist)
@@ -230,7 +230,7 @@ def edit_list(id):
                                 'start_date': form.start_date.data,
                                 'status': request.form['status'],
                                 'status_note': form.status_note.data,
-                                'diacrisis': form.diacrisis.data,
+                                'diacrisis': form.diacrisis.data, # TODO: заменить
                                 'patient_id': request.form['patient'],
                                 'doctor_id': request.form['doctor'],
                                 'first_checkin': first_checkin_date,
@@ -246,7 +246,7 @@ def edit_list(id):
         form.id.data = sicklist.id
         form.sick_list_number.data = sicklist.sick_list_number
         form.start_date.data = sicklist.start_date
-        form.diacrisis.data = sicklist.diacrisis
+        form.diacrisis.data = sicklist.diacrisis # TODO: заменить
         form.status_note.data = sicklist.status_note
     return render_template('edit_list.html', form=form, sicklist=sicklist)
 
@@ -409,3 +409,26 @@ def edit_checkin(id, type_checkin):
     return render_template('checkin.html',
                            form=form,
                            title='Добавить совместный осмотр')
+
+
+@main.route('/list_diacrisis')
+@login_required
+def list_diacrisis():
+    diagnoses = Diacrisis.query.order_by(Diacrisis.diagnoses.asc()).all()
+    return render_template('list_diacrisis.html', diagnoses=diagnoses)
+
+
+@main.route('/add_diacrisis', methods=['GET', 'POST'])
+@login_required
+def add_diacrisis():
+    form = DiacrisisForm()
+    if form.validate_on_submit():
+        diagnoses = Diacrisis(diagnoses=form.diagnoses.data)
+        db.session.add(diagnoses)
+        db.session.commit()
+        flash('Диагноз "{}" добавлен'.format(form.diagnoses.data))
+        return redirect(url_for('main.list_diacrisis'))
+    return render_template('add_diacrisis.html', form=form)
+
+
+# TODO: редактирование диагнозов

@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+
+{% block app_content %}
+    <h1>Список диагнозов</h1>
+    <p><a href="{{ url_for('main.add_diacrisis') }}">Добавить диагноз</a></p>
+    <table class="table table-condensed table-striped">
+        <thead>
+            <tr>
+                <th></th>
+                <th>Диагноз</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for dia in diagnoses %}
+            <tr>
+                <td><a href="#">
+                        <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+                    </a>
+                </td>
+                <td>{{ dia.diagnoses }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
