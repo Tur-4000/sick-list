@@ -124,4 +124,4 @@ class Diacrisis(db.Model):
     sick_lists = db.relationship('Lists', backref='diacrisis', lazy='dynamic')
 
     def __repr__(self):
-        return '<{self.diagnoses}>'
+        return f'<{self.diagnoses}>'
