@@ -2,9 +2,11 @@
 {% import 'bootstrap/wtf.html' as wtf %}
 
 {% block app_content %}
-    <h1>Добавить/редактировать выходной</h1>
     <div class="row">
         <div class="col-md-4">
+        </div>
+        <div class="col-md-4">
+            <h1>Добавить/редактировать выходной</h1>
             {{ wtf.quick_form(form, button_map={'submit': 'success'}) }}
             <br>
             <a href="{{ url_for('main.list_holidays') }}" class="btn btn-primary">
@@ -15,6 +17,7 @@
                 <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
                 Удалить выходной</a>
         </div>
-        <div></div>
+        <div class="col-md-4">
+        </div>
     </div>
 {% endblock %}

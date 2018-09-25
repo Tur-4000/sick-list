@@ -50,7 +50,6 @@ class SicklistForm(FlaskForm):
                                    render_kw={'placeholder': 'Номер больничного'})
     start_date = DateField('Дата открытия', format='%Y-%m-%d', validators=[DataRequired()])
     patient = SelectField('Пациент', coerce=int)
-    diacrisis = StringField('Диагноз', validators=[DataRequired()])
     diagnoses = SelectField('Диагноз', coerce=int)
     doctor = SelectField('Лечащий врач', coerce=int)
     status = SelectField('Статус', choices=[('open', 'Открыт'), ('relocated', 'перемещён')], coerce=str)
@@ -63,7 +62,7 @@ class SicklistForm(FlaskForm):
         self.patient.choices = [(p.id, " ".join([p.last_name, p.first_name, p.middle_name]))
                                 for p in Patients.query.order_by('last_name')]
         self.doctor.choices = [(e.id, " ".join([e.last_name, e.first_name, e.middle_name]))
-                                for e in Employes.query.filter_by(dismissed=False).order_by('last_name')]
+                               for e in Employes.query.filter_by(dismissed=False).order_by('last_name')]
         self.diagnoses.choices = [(dia.id, dia.diagnoses)
                                   for dia in Diacrisis.query.order_by('diagnoses')]
 

@@ -87,7 +87,6 @@ class Lists(db.Model):
     end_date = db.Column(db.Date)
     status = db.Column(db.String(32))
     status_note = db.Column(db.String(255))
-    diacrisis = db.Column(db.String(255)) # TODO: после завершения CRUD диагнозов удалить
     diagnoses_id = db.Column(db.Integer, db.ForeignKey('diacrisis.id'))
     patient_id = db.Column(db.Integer, db.ForeignKey('patients.id'))
     doctor_id = db.Column(db.Integer, db.ForeignKey('employes.id'))
@@ -122,7 +121,7 @@ class Diacrisis(db.Model):
     __tablename__ = 'diacrisis'
     id = db.Column(db.Integer, primary_key=True)
     diagnoses = db.Column(db.String(255), index=True, unique=True, nullable=False)
-    sick_lists = db.relationship('Lists', backref='diacrises', lazy='dynamic')
+    sick_lists = db.relationship('Lists', backref='diacrisis', lazy='dynamic')
 
     def __repr__(self):
         return '<{self.diagnoses}>'

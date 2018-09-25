@@ -30,9 +30,11 @@
             {% for list in sicklists %}
             <tr>
                 <td rowspan="2">
+                    {% if not list.end_date %}
                     <a href="{{ url_for('main.edit_list', id=list.id) }}">
                         <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
                     </a>
+                    {% endif %}
                 </td>
                 <td rowspan="2">{{ list.sick_list_number }}</td>
                 <td>{{ moment(list.start_date).format('L') }}</td>
@@ -46,7 +48,7 @@
                     {{ list.doctor.last_name + " " + list.doctor.first_name + " " + list.doctor.middle_name }}
                     </a>
                 </td>
-                <td rowspan="2">{{ list.diacrisis }}</td>
+                <td rowspan="2">{{ list.diacrisis.diagnoses }}</td>
 
                 <td {% if today == list.first_checkin %} class="success" {% endif %}>
                 {{ moment(list.first_checkin).format('L') }}</td>

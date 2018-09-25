@@ -2,15 +2,17 @@
 {% import 'bootstrap/wtf.html' as wtf %}
 
 {% block app_content %}
-    <h1>Закрыть больничный лист</h1>
     <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-3">
+        </div>
+        <div class="col-md-6">
+            <h1>Закрыть больничный лист</h1>
             <p><b>Больничный лист № </b>{{ sicklist.sick_list_number }}</p>
             <p><b>Больничный открыт: </b>{{ moment(sicklist.start_date).format('L') }}</p>
             <p><b>Пациент: </b>{{ sicklist.patient.last_name + " " + 
                                   sicklist.patient.first_name + " " + 
                                   sicklist.patient.middle_name }}</p>
-            <p><b>Диагноз: </b>{{ sicklist.diacrisis }}</p>
+            <p><b>Диагноз: </b>{{ sicklist.diacrisis.diagnoses }}</p>
             <p><b>Лечащий врач: </b>{{ sicklist.doctor.last_name + " " + 
                                        sicklist.doctor.first_name + " " + 
                                        sicklist.doctor.middle_name }}</p>
@@ -20,6 +22,8 @@
             <a href="{{ url_for('main.all') }}" class="btn btn-primary">
                 <span class="glyphicon glyphicon-share" aria-hidden="true"></span> 
                 Назад к списку больничных листов</a>
+        </div>
+        <div class="col-md-3">
         </div>
     </div>
 {% endblock %}

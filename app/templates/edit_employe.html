@@ -2,14 +2,19 @@
 {% import 'bootstrap/wtf.html' as wtf %}
 
 {% block app_content %}
-    <h1>Изменить информацию о сотруднике</h1>
+
     <div class="row">
         <div class="col-md-4">
+        </div>
+        <div class="col-md-4">
+            <h1>Изменить информацию о сотруднике</h1>
             {{ wtf.quick_form(form, button_map={'submit': 'success'}) }}
             <br>
             <a href="{{ url_for('main.list_employes') }}" class="btn btn-primary">
                 <span class="glyphicon glyphicon-share" aria-hidden="true"></span> 
                 Назад к списку сотрудников</a>
+        </div>
+        <div class="col-md-4">
         </div>
     </div>
 {% endblock %}

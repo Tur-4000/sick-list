@@ -194,7 +194,7 @@ def add_sicklist():
                          second_checkin=second_checkin_date,
                          vkk=vkk_date,
                          status=request.form['status'],
-                         diacrisis=form.diacrisis.data, # TODO: заменить
+                         diagnoses_id=request.form['diagnoses'],
                          patient_id=request.form['patient'],
                          doctor_id=request.form['doctor'])
         db.session.add(sicklist)
@@ -230,7 +230,7 @@ def edit_list(id):
                                 'start_date': form.start_date.data,
                                 'status': request.form['status'],
                                 'status_note': form.status_note.data,
-                                'diacrisis': form.diacrisis.data, # TODO: заменить
+                                'diagnoses_id': request.form['diagnoses'],
                                 'patient_id': request.form['patient'],
                                 'doctor_id': request.form['doctor'],
                                 'first_checkin': first_checkin_date,
@@ -246,7 +246,7 @@ def edit_list(id):
         form.id.data = sicklist.id
         form.sick_list_number.data = sicklist.sick_list_number
         form.start_date.data = sicklist.start_date
-        form.diacrisis.data = sicklist.diacrisis # TODO: заменить
+        form.diagnoses.data = sicklist.diagnoses_id
         form.status_note.data = sicklist.status_note
     return render_template('edit_list.html', form=form, sicklist=sicklist)
 
@@ -428,7 +428,19 @@ def add_diacrisis():
         db.session.commit()
         flash('Диагноз "{}" добавлен'.format(form.diagnoses.data))
         return redirect(url_for('main.list_diacrisis'))
-    return render_template('add_diacrisis.html', form=form)
+    return render_template('diacrisis.html', form=form)
 
 
-# TODO: редактирование диагнозов
+@main.route('/edit_diacrisis/<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit_diacrisis(id):
+    form = DiacrisisForm()
+    if form.validate_on_submit():
+        Diacrisis.query.filter_by(id=id).update({
+            'diagnoses': form.diagnoses.data})
+        db.session.commit()
+        flash('Диагноз изменён')
+        return redirect(url_for('main.list_diacrisis'))
+    diacrisis = Diacrisis.query.filter_by(id=id).first_or_404()
+    form.diagnoses.data = diacrisis.diagnoses
+    return render_template('diacrisis.html', form=form)

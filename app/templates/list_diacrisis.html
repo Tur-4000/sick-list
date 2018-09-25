@@ -13,7 +13,7 @@
         <tbody>
             {% for dia in diagnoses %}
             <tr>
-                <td><a href="#">
+                <td><a href="{{ url_for('main.edit_diacrisis', id=dia.id) }}">
                         <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
                     </a>
                 </td>

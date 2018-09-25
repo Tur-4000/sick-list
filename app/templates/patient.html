@@ -25,9 +25,11 @@
             {% for list in patient.sick_lists %}
             <tr>
                 <td>
+                    {% if not list.end_date %}
                     <a href="{{ url_for('main.edit_list', id=list.id) }}">
                         <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
                     </a>
+                    {% endif %}
                 </td>
                 <td>{{ list.sick_list_number }}</td>
                 <td>{{ list.doctor.last_name + " " + list.doctor.first_name + " " + list.doctor.middle_name }}</td>
@@ -41,7 +43,7 @@
                     переведен
                     {% endif %}
                 </td>
-                <td>{{ list.diacrisis }}</td>
+                <td>{{ list.diacrisis.diagnoses }}</td>
                 <td>
                     {% if list.end_date %}
                     {{ list.end_date }}
