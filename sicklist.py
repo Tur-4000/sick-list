@@ -7,9 +7,11 @@ if os.path.exists(dotenv_path):
 
 import sys
 import click
+
+from flask_migrate import Migrate, upgrade
+
 from app import create_app, db
 from app.models import User, Employes, Patients, Lists, Holiday, Diacrisis
-from flask_migrate import Migrate, upgrade
 
 
 app = create_app(os.getenv('FLASK_CONFIG') or 'default')

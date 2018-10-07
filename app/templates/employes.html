@@ -3,7 +3,7 @@
 {% block app_content %}
     <h1>Справочник сотрудников</h1>
     <p><a href="{{ url_for('main.add_employe') }}">Добавить сотрудника</a></p>
-    <table class="table table-condensed table-striped">
+    <table id="dataTable" class="table table-condensed table-striped">
         <thead>
             <tr>
                 <th></th>

@@ -3,7 +3,7 @@
 {% block app_content %}
     <h1>Список диагнозов</h1>
     <p><a href="{{ url_for('main.add_diacrisis') }}">Добавить диагноз</a></p>
-    <table class="table table-condensed table-striped">
+    <table id="dataTable" class="table table-condensed table-striped">
         <thead>
             <tr>
                 <th></th>
