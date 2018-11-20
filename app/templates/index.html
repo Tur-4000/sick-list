@@ -34,7 +34,8 @@
         </thead>
         <tbody>
         {% for list in sicklists %}
-          <tr>
+          <tr
+            {% if list.end_date %}class="active"{% endif %}>
             <td>
                 {% if not list.end_date %}
                 <a href="{{ url_for('main.edit_list', id=list.id) }}">
