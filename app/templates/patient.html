@@ -56,3 +56,20 @@
 </table>
 
 {% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+  <script>
+    $(document).ready(function() {
+      $('#dataTable').DataTable({
+        "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "Все"]],
+        "columnDefs": [
+          { "orderable": false, "targets": 0 }
+        ],
+        language: {
+            url: "{{ url_for('static', filename='js/Russian.json') }}"
+        }
+      });
+    } );
+  </script>
+{% endblock %}

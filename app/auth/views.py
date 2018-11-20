@@ -48,8 +48,6 @@ def logout():
 @login_required
 @admin_required
 def register():
-    if current_user.username != 'Admin':
-        return redirect(url_for('main.index'))
     form = RegistrationForm()
     form.employe.choices = [
         (e.id, ' '.join((e.last_name, e.first_name, e.middle_name))) for e in Employes.query.order_by('last_name')
@@ -70,8 +68,6 @@ def register():
 @login_required
 @admin_required
 def del_user(id):
-    if current_user.username != 'Admin':
-        return redirect(url_for('main.index'))
     user = User.query.filter_by(id=id).first_or_404()
     db.session.delete(user)
     db.session.commit()
@@ -83,8 +79,6 @@ def del_user(id):
 @login_required
 @admin_required
 def user(username):
-    if current_user.username != 'Admin':
-        return redirect(url_for('main.index'))
     user = User.query.filter_by(username=username).first_or_404()
     employe = Employes.query.filter_by(id=user.employe_id).first()
     return render_template('auth/user.html', user=user, employe=employe)
@@ -94,8 +88,6 @@ def user(username):
 @login_required
 @admin_required
 def list_users():
-    if current_user.username != 'Admin':
-        return redirect(url_for('main.index'))
     users = User.query.order_by(User.username).all()
     return render_template('auth/list_users.html', users=users)
 

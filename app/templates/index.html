@@ -45,7 +45,7 @@
             </td>
             <td>{{ list.sick_list_number }}</td>
             <td>
-              {{ moment(list.start_date).format('L') }}<br><hr style="margin: 5px">
+              {{ list.start_date }}<br><hr style="margin: 5px">
               {% if list.open_list_doctor.last_name %}
               {{ list.open_list_doctor.last_name + " " +
                   list.open_list_doctor.first_name[0] + ". " +
@@ -123,4 +123,22 @@
         {% endfor %}
         </tbody>
     </table>
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+  <script>
+    $(document).ready(function() {
+      $('#dataTable').DataTable({
+        "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "Все"]],
+        "columnDefs": [
+          { "orderable": false, "targets": 0 }
+        ],
+        "order": [[ 2, 'desc' ],],
+        language: {
+            url: "{{ url_for('static', filename='js/Russian.json') }}"
+        }
+      });
+    } );
+  </script>
 {% endblock %}

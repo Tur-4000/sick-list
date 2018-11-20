@@ -23,3 +23,19 @@
         </tbody>
     </table>
 {% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+  <script>
+    $(document).ready(function() {
+      $('#dataTable').DataTable({
+        "columnDefs": [
+          { "orderable": false, "targets": 0 }
+        ],
+        language: {
+            url: "{{ url_for('static', filename='js/Russian.json') }}"
+        }
+      });
+    } );
+  </script>
+{% endblock %}
