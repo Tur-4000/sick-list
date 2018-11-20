@@ -78,9 +78,13 @@ def add_employe():
                            dismissed=False)
         db.session.add(employe)
         db.session.commit()
-        flash('Сотрудник {} {} {} добавлен'.format(form.last_name.data, form.first_name.data, form.middle_name.data))
+        flash('Сотрудник {} {} {} добавлен'.format(form.last_name.data,
+                                                   form.first_name.data,
+                                                   form.middle_name.data))
         return redirect(url_for('main.list_employes'))
-    return render_template('add_employe.html', title='Добавление сотрудника', form=form)
+    return render_template('add_employe.html',
+                           title='Добавление сотрудника',
+                           form=form)
 
 
 @main.route('/edit_employe/<int:id>', methods=['GET', 'POST'])

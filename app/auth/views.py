@@ -1,11 +1,13 @@
+from datetime import datetime
+
 from flask import render_template, flash, redirect, url_for, request
 from flask_login import current_user, login_user, logout_user, login_required
+from werkzeug.urls import url_parse
+
 from . import auth
+from .forms import LoginForm, RegistrationForm, EditProfileForm
 from .. import db
 from ..models import User, Employes
-from .forms import LoginForm, RegistrationForm, EditProfileForm
-from werkzeug.urls import url_parse
-from datetime import datetime
 
 
 @auth.before_request
@@ -36,7 +38,7 @@ def login():
 @auth.route('/logout')
 def logout():
     logout_user()
-    return redirect(url_for('main.index'))
+    return redirect(url_for('auth.login'))
 
 
 @auth.route('/register', methods=['GET', 'POST'])
@@ -45,15 +47,18 @@ def register():
     if current_user.username != 'Admin':
         return redirect(url_for('main.index'))
     form = RegistrationForm()
-    form.employe.choices = [(e.id, e.last_name + ' ' + e.first_name + ' ' + e.middle_name)
-                                for e in Employes.query.order_by('last_name')]
+    form.employe.choices = [
+        (e.id, ' '.join((e.last_name, e.first_name, e.middle_name))) for e in Employes.query.order_by('last_name')
+    ]
     if form.validate_on_submit():
-        user = User(username=form.username.data, email=form.email.data, employe_id=request.form['employe'])
+        user = User(username=form.username.data,
+                    email=form.email.data,
+                    employe_id=request.form['employe'])
         user.set_password(form.password.data)
         db.session.add(user)
         db.session.commit()
         flash('Пользователь {} добавлен'.format(form.username.data))
-        return redirect(url_for('auth.register'))
+        return redirect(url_for('auth.list_users'))
     return render_template('auth/register.html', title='Регистрация', form=form)
 
 
@@ -72,6 +77,8 @@ def del_user(id):
 @auth.route('/user/<username>')
 @login_required
 def user(username):
+    if current_user.username != 'Admin':
+        return redirect(url_for('main.index'))
     user = User.query.filter_by(username=username).first_or_404()
     employe = Employes.query.filter_by(id=user.employe_id).first()
     return render_template('auth/user.html', user=user, employe=employe)
@@ -80,6 +87,8 @@ def user(username):
 @auth.route('/list_users')
 @login_required
 def list_users():
+    if current_user.username != 'Admin':
+        return redirect(url_for('main.index'))
     users = User.query.order_by(User.username).all()
     return render_template('auth/list_users.html', users=users)
 

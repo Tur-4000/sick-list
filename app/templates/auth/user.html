@@ -6,27 +6,35 @@
     {% if user.last_visit %}<p>Последне посещение: {{ moment(user.last_visit).format('LLL') }}</p>{% endif %}
     <hr>
     <p>
-        <b>email:</b> {{ user.email }}<br>
-        {% if employe %}
-        <b>Сотрудник:</b> {{ employe.last_name + " " + 
-                             employe.first_name + " " + 
+      <b>email:</b> {{ user.email }}<br>
+      {% if employe %}
+        <b>Сотрудник:</b> {{ employe.last_name + " " +
+                             employe.first_name + " " +
                              employe.middle_name }}
-        {% endif %}
+      {% endif %}
     </p>
+  <div class="row">
+    <div class="col-md-2">
+      <a href="{{ url_for('auth.list_users') }}" class="btn btn-primary">
+          <span class="glyphicon glyphicon-share" aria-hidden="true"></span>
+          Назад к списку пользователей
+      </a>
+    </div>
     {% if current_user.username == 'Admin' %}
-    <p>
+      <div class="col-md-2 col-md-offset-1">
         <a href="{{ url_for('auth.edit_profile', id=user.id) }}" class="btn btn-primary">
             <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
             Редактировать профиль
         </a>
-    </p>
-        {% if user.username != 'Admin' %}
-        <p>
-            <a href="{{ url_for('auth.del_user', id=user.id) }}" class="btn btn-danger">
-                <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
-                Удалить пользователя
-            </a>
-        </p>
-        {% endif %}
+      </div>
+      {% if user.username != 'Admin' %}
+        <div class="col-md-2 col-md-offset-1">
+          <a href="{{ url_for('auth.del_user', id=user.id) }}" class="btn btn-danger">
+              <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+              Удалить пользователя
+          </a>
+        </div>
+      {% endif %}
     {% endif %}
+  </div>
 {% endblock %}

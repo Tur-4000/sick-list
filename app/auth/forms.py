@@ -1,14 +1,16 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, HiddenField, SelectField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, \
+    HiddenField, SelectField
 from wtforms.validators import DataRequired, ValidationError, Email, EqualTo
+
 from ..models import User
 
 
 class LoginForm(FlaskForm):
     username = StringField('Имя пользователя', validators=[DataRequired()],
-                                    render_kw={'placeholder': 'Имя пользователя'})
+                           render_kw={'placeholder': 'Имя пользователя'})
     password = PasswordField('Пароль', validators=[DataRequired()],
-                                    render_kw={'placeholder': 'Пароль'})
+                             render_kw={'placeholder': 'Пароль'})
     remember_me = BooleanField('Запомнить')
     submit = SubmitField('Войти')
 
@@ -18,7 +20,8 @@ class RegistrationForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
     employe = SelectField('Сотрудник', coerce=int)
     password = PasswordField('Пароль', validators=[DataRequired()])
-    password2 = PasswordField('Повторить пароль', validators=[DataRequired(), EqualTo('password')])
+    password2 = PasswordField('Повторить пароль',
+                              validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Добавить')
 
     def validate_username(self, username):
