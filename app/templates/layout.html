@@ -55,7 +55,9 @@
                 <ul class="nav navbar-nav navbar-right">
                   {% if current_user.is_authenticated %}
                   <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Профиль <b class="caret"></b></a>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                      <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+                      {{ current_user.username }} <b class="caret"></b></a>
                     <ul class="dropdown-menu">
                       {% if current_user.can(Permission.ADMIN) %}
                         <li>
@@ -66,8 +68,12 @@
                         </li>
                         <li role="separator" class="divider"></li>
                       {% endif %}
-                      <li><a href="{{ url_for('auth.change_password') }}">Изменить пароль</a></li>
-                      <li><a href="{{ url_for('auth.change_email') }}">Изменить eMail</a></li>
+                      <li><a href="{{ url_for('auth.change_password') }}">
+                        <span class="glyphicon glyphicon-certificate" aria-hidden="true"></span>
+                        Изменить пароль</a></li>
+                      <li><a href="{{ url_for('auth.change_email') }}">
+                        <span class="glyphicon glyphicon-envelope" aria-hidden="true"></span>
+                        Изменить eMail</a></li>
                     </ul>
                   </li>
                   <li>
