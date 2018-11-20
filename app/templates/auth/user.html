@@ -5,14 +5,15 @@
     <h1>Пользователь: {{ user.username }}</h1>
     {% if user.last_visit %}<p>Последне посещение: {{ moment(user.last_visit).format('LLL') }}</p>{% endif %}
     <hr>
+    <p><b>email:</b> {{ user.email }}</p>
     <p>
-      <b>email:</b> {{ user.email }}<br>
       {% if employe %}
         <b>Сотрудник:</b> {{ employe.last_name + " " +
                              employe.first_name + " " +
                              employe.middle_name }}
       {% endif %}
     </p>
+    <p><b>Роль:</b> {{ user.role.name }}</p>
   <div class="row">
     <div class="col-md-2">
       <a href="{{ url_for('auth.list_users') }}" class="btn btn-primary">
@@ -20,14 +21,14 @@
           Назад к списку пользователей
       </a>
     </div>
-    {% if current_user.username == 'Admin' %}
+    {% if current_user.can(Permission.ADMIN) %}
       <div class="col-md-2 col-md-offset-1">
         <a href="{{ url_for('auth.edit_profile', id=user.id) }}" class="btn btn-primary">
             <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
             Редактировать профиль
         </a>
       </div>
-      {% if user.username != 'Admin' %}
+      {% if not user.can(Permission.ADMIN) %}
         <div class="col-md-2 col-md-offset-1">
           <a href="{{ url_for('auth.del_user', id=user.id) }}" class="btn btn-danger">
               <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>

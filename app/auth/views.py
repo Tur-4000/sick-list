@@ -5,9 +5,11 @@ from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.urls import url_parse
 
 from . import auth
-from .forms import LoginForm, RegistrationForm, EditProfileForm
+from .forms import LoginForm, RegistrationForm, EditProfileForm, \
+    ChangePasswordForm, ChangeEmailForm
+from ..decorators import admin_required, permission_required
 from .. import db
-from ..models import User, Employes
+from ..models import User, Employes, Permission, Role
 
 
 @auth.before_request
@@ -36,6 +38,7 @@ def login():
 
 
 @auth.route('/logout')
+@permission_required(Permission.READ)
 def logout():
     logout_user()
     return redirect(url_for('auth.login'))
@@ -43,6 +46,7 @@ def logout():
 
 @auth.route('/register', methods=['GET', 'POST'])
 @login_required
+@admin_required
 def register():
     if current_user.username != 'Admin':
         return redirect(url_for('main.index'))
@@ -54,7 +58,7 @@ def register():
         user = User(username=form.username.data,
                     email=form.email.data,
                     employe_id=request.form['employe'])
-        user.set_password(form.password.data)
+        user.password = form.password.data
         db.session.add(user)
         db.session.commit()
         flash('Пользователь {} добавлен'.format(form.username.data))
@@ -64,6 +68,7 @@ def register():
 
 @auth.route('/del_user/<int:id>')
 @login_required
+@admin_required
 def del_user(id):
     if current_user.username != 'Admin':
         return redirect(url_for('main.index'))
@@ -76,6 +81,7 @@ def del_user(id):
 
 @auth.route('/user/<username>')
 @login_required
+@admin_required
 def user(username):
     if current_user.username != 'Admin':
         return redirect(url_for('main.index'))
@@ -86,6 +92,7 @@ def user(username):
 
 @auth.route('/list_users')
 @login_required
+@admin_required
 def list_users():
     if current_user.username != 'Admin':
         return redirect(url_for('main.index'))
@@ -95,21 +102,28 @@ def list_users():
 
 @auth.route('/edit_profile/<int:id>', methods=['GET', 'POST'])
 @login_required
+@admin_required
 def edit_profile(id):
     user = User.query.filter_by(id=id).first_or_404()
     form = EditProfileForm(obj=user)
-    form.employe.choices = [(e.id, e.last_name + ' ' + e.first_name + ' ' + e.middle_name)
-                                    for e in Employes.query.order_by('last_name')]
+    form.employe.choices = [
+        (e.id, ' '.join((e.last_name, e.first_name, e.middle_name)))
+        for e in Employes.query.order_by('last_name')
+    ]
+    form.role.choices = [
+        (r.id, r.name) for r in Role.query.all()
+    ]
     if form.validate_on_submit():
         user.username = form.username.data
         user.email = form.email.data
         user.employe_id = request.form['employe']
+        user.role_id = request.form['role']
         db.session.commit()
         flash('Изменения сохранены')
         return redirect(url_for('auth.edit_profile', id=form.id.data))
     elif request.method == 'GET':
-        form.employe.default = user.employe_id
-        form.process()
+        form.employe.data = user.employe_id
+        form.role.data = user.role_id
         form.id.data = user.id
         form.username.data = user.username
         form.email.data = user.email
@@ -118,3 +132,32 @@ def edit_profile(id):
                            form=form,
                            user=user)
 
+
+@auth.route('/change_password', methods=['GET', 'POST'])
+@login_required
+def change_password():
+    form = ChangePasswordForm()
+    if form.validate_on_submit():
+        if current_user.check_password(form.old_password.data):
+            current_user.password = form.password.data
+            db.session.add(current_user)
+            db.session.commit()
+            flash('Ваш пароль изменён.')
+            return redirect(url_for('main.index'))
+        else:
+            flash('Неправильный пароль.')
+    return render_template('auth/change_password.html', form=form)
+
+
+@auth.route('/change_email', methods=['GET', 'POST'])
+@login_required
+def change_email():
+    form = ChangeEmailForm()
+    if form.validate_on_submit():
+        current_user.email = form.new_email.data
+        db.session.add(current_user)
+        db.session.commit()
+        flash('Ваш eMail изменён.')
+        return redirect(url_for('main.index'))
+    form.old_email.data = current_user.email
+    return render_template('auth/change_email.html', form=form)

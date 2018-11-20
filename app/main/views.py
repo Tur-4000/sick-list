@@ -10,7 +10,9 @@ from .forms import AddPatientForm, EditPatientForm
 from .forms import CheckinForm, DiacrisisForm
 from .forms import CloseListForm, SicklistForm
 from .. import db
-from ..models import User, Patients, Lists, Employes, Holiday, is_work_day, Diacrisis
+from ..models import User, Patients, Lists, Employes, Holiday, is_work_day, \
+    Diacrisis, Permission
+from ..decorators import permission_required, admin_required
 
 
 @main.before_request
@@ -23,6 +25,7 @@ def before_request():
 @main.route('/', methods=['GET', 'POST'])
 @main.route('/index', methods=['GET', 'POST'])
 @login_required
+@permission_required(Permission.READ)
 def index():
     today = date.today()
     sicklists = Lists.query.filter_by(
@@ -43,6 +46,7 @@ def index():
 
 @main.route('/all')
 @login_required
+@permission_required(Permission.READ)
 def all():
     today = date.today()
     sicklists = Lists.query.order_by(Lists.start_date.desc()).all()
@@ -52,6 +56,7 @@ def all():
 
 @main.route('/list_employes')
 @login_required
+@permission_required(Permission.READ)
 def list_employes():
     employes = Employes.query.outerjoin(User, (
                 User.employe_id == Employes.id)).add_columns(
@@ -68,6 +73,7 @@ def list_employes():
 
 @main.route('/add_employe', methods=['GET', 'POST'])
 @login_required
+@permission_required(Permission.WRITE)
 def add_employe():
     form = AddEmployeForm()
     if form.validate_on_submit():
@@ -89,6 +95,7 @@ def add_employe():
 
 @main.route('/edit_employe/<int:id>', methods=['GET', 'POST'])
 @login_required
+@permission_required(Permission.WRITE)
 def edit_employe(id):
     employe = Employes.query.filter_by(id=id).first_or_404()
     form = EditEmployeForm()
@@ -114,6 +121,7 @@ def edit_employe(id):
 
 @main.route('/employe/<int:id>')
 @login_required
+@permission_required(Permission.READ)
 def employe(id):
     employe = Employes.query.filter_by(id=id).first_or_404()
     lists = Lists.query.filter_by(doctor_id=id).all()
@@ -122,6 +130,7 @@ def employe(id):
 
 @main.route('/list_patients')
 @login_required
+@permission_required(Permission.READ)
 def list_patients():
     patients = Patients.query.order_by(Patients.last_name).all()
     return render_template('list_patients.html', patients=patients)
@@ -129,6 +138,7 @@ def list_patients():
 
 @main.route('/add_patient', methods=['GET', 'POST'])
 @login_required
+@permission_required(Permission.WRITE)
 def add_patient():
     form = AddPatientForm()
     if form.validate_on_submit():
@@ -150,6 +160,7 @@ def add_patient():
 
 @main.route('/patient/<int:id>')
 @login_required
+@permission_required(Permission.READ)
 def patient(id):
     patient = Patients.query.filter_by(id=id).first_or_404()
     return render_template('patient.html', patient=patient)
@@ -157,6 +168,7 @@ def patient(id):
 
 @main.route('/edit_patient/<int:id>', methods=['GET', 'POST'])
 @login_required
+@permission_required(Permission.WRITE)
 def edit_patient(id):
     patient = Patients.query.filter_by(id=id).first_or_404()
     form = EditPatientForm(obj=patient)
@@ -182,6 +194,7 @@ def edit_patient(id):
 
 @main.route('/add_sicklist', methods=['GET', 'POST'])
 @login_required
+@permission_required(Permission.WRITE)
 def add_sicklist():
     form = SicklistForm()
     if form.validate_on_submit():
@@ -210,6 +223,7 @@ def add_sicklist():
 
 @main.route('/edit_list/<int:id>', methods=['GET', 'POST'])
 @login_required
+@permission_required(Permission.WRITE)
 def edit_list(id):
     sicklist = Lists.query.filter_by(id=id).first_or_404()
     form = SicklistForm()
@@ -257,6 +271,7 @@ def edit_list(id):
 
 @main.route('/close_list/<int:id>', methods=['GET', 'POST'])
 @login_required
+@permission_required(Permission.WRITE)
 def close_list(id):
     sicklist = Lists.query.filter_by(id=id).first_or_404()
     form = CloseListForm()
@@ -276,6 +291,7 @@ def close_list(id):
 
 @main.route('/list_holidays')
 @login_required
+@permission_required(Permission.READ)
 def list_holidays():
     holidays = Holiday.query.order_by(Holiday.holiday_date.desc()).all()
     return render_template('list_holidays.html', holidays=holidays)
@@ -283,6 +299,7 @@ def list_holidays():
 
 @main.route('/add_holiday', methods=['GET', 'POST'])
 @login_required
+@permission_required(Permission.WRITE)
 def add_holiday():
     form = AddHolidayForm()
     if form.validate_on_submit():
@@ -301,6 +318,7 @@ def add_holiday():
 
 @main.route('/edit_holiday/<int:id>', methods=['GET', 'POST'])
 @login_required
+@permission_required(Permission.WRITE)
 def edit_holiday(id):
     holiday = Holiday.query.filter_by(id=id).first_or_404()
     form = EditHolidayForm()
@@ -325,6 +343,7 @@ def edit_holiday(id):
 
 @main.route('/del_holiday/<int:id>')
 @login_required
+@permission_required(Permission.WRITE)
 def del_holiday(id):
     holiday = Holiday.query.filter_by(id=id).first_or_404()
     db.session.delete(holiday)
@@ -335,6 +354,7 @@ def del_holiday(id):
 
 @main.route('/add_checkin/<int:id>/<type_checkin>', methods=['GET', 'POST'])
 @login_required
+@permission_required(Permission.WRITE)
 def add_checkin(id, type_checkin):
     form = CheckinForm()
     if form.validate_on_submit():
@@ -371,6 +391,7 @@ def add_checkin(id, type_checkin):
 
 @main.route('/edit_checkin/<int:id>/<type_checkin>', methods=['GET', 'POST'])
 @login_required
+@permission_required(Permission.WRITE)
 def edit_checkin(id, type_checkin):
     form = CheckinForm()
     if form.validate_on_submit():
@@ -417,6 +438,7 @@ def edit_checkin(id, type_checkin):
 
 @main.route('/list_diacrisis')
 @login_required
+@permission_required(Permission.READ)
 def list_diacrisis():
     diagnoses = Diacrisis.query.order_by(Diacrisis.diagnoses.asc()).all()
     return render_template('list_diacrisis.html', diagnoses=diagnoses)
@@ -424,6 +446,7 @@ def list_diacrisis():
 
 @main.route('/add_diacrisis', methods=['GET', 'POST'])
 @login_required
+@permission_required(Permission.WRITE)
 def add_diacrisis():
     form = DiacrisisForm()
     if form.validate_on_submit():
@@ -437,6 +460,7 @@ def add_diacrisis():
 
 @main.route('/edit_diacrisis/<int:id>', methods=['GET', 'POST'])
 @login_required
+@permission_required(Permission.WRITE)
 def edit_diacrisis(id):
     form = DiacrisisForm()
     if form.validate_on_submit():

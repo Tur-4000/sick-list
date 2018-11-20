@@ -40,4 +40,34 @@ class EditProfileForm(FlaskForm):
     username = StringField('Имя пользователя')
     email = StringField('eMail')
     employe = SelectField('Сотрудник', coerce=int)
+    role = SelectField('Права доступа', coerce=int)
     submit = SubmitField('Сохранить')
+
+    def validate_username(self, field):
+        if User.query.filter_by(username=field.data).first() and \
+                (User.query.filter_by(username=field.data).first().username !=
+                 field.data):
+            raise ValidationError('Такой логин уже используется')
+
+    def validate_email(self, field):
+        if User.query.filter_by(email=field.data).first() and \
+                (User.query.filter_by(email=field.data).first().email !=
+                 field.data):
+            raise ValidationError('Такой eMail уже зарегистрирован.')
+
+
+class ChangePasswordForm(FlaskForm):
+    old_password = PasswordField('Старый пароль', validators=[DataRequired()])
+    password = PasswordField('Новый пароль', validators=[
+        DataRequired(), EqualTo('password2', message='Пароли должны совпадать.')])
+    password2 = PasswordField('Подтверждение нового пароля',
+                              validators=[DataRequired()])
+    submit = SubmitField('Изменить пароль')
+
+
+class ChangeEmailForm(FlaskForm):
+    old_email = StringField('Старый eMail')
+    new_email = StringField('Новый eMail')
+    submit = SubmitField('Изменить eMail')
+
+    # TODO: добавить валидацию email на уникальность

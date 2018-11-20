@@ -53,20 +53,30 @@
                     </li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
-                    {% if current_user.is_anonymous %}
-                    <li><a href="{{ url_for('auth.login') }}">
-                            <span class="glyphicon glyphicon-log-in" aria-hidden="true"></span> 
-                        Войти</a></li>
-                    {% else %}
-                        {% if  current_user.username == 'Admin' %}
-                        <li><a href="{{ url_for('auth.list_users') }}">
-                                <span class="glyphicon glyphicon-user" aria-hidden="true"></span> 
-                                Пользователи</a></li>
-                        {% endif %}
-                    <li><a href="{{ url_for('auth.logout') }}">
-                            <span class="glyphicon glyphicon-log-out" aria-hidden="true"></span> 
-                        Выйти</a></li>
-                    {% endif %}
+                  {% if current_user.is_authenticated %}
+                  <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Профиль <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                      {% if current_user.can(Permission.ADMIN) %}
+                        <li>
+                          <a href="{{ url_for('auth.list_users') }}">
+                            <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+                            Пользователи
+                          </a>
+                        </li>
+                        <li role="separator" class="divider"></li>
+                      {% endif %}
+                      <li><a href="{{ url_for('auth.change_password') }}">Изменить пароль</a></li>
+                      <li><a href="{{ url_for('auth.change_email') }}">Изменить eMail</a></li>
+                    </ul>
+                  </li>
+                  <li>
+                    <a href="{{ url_for('auth.logout') }}">
+                      <span class="glyphicon glyphicon-log-out" aria-hidden="true"></span>
+                      Выйти
+                    </a>
+                  </li>
+                  {% endif %}
                 </ul>
             </div>
         </div>

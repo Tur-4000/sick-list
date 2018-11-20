@@ -16,7 +16,7 @@ class Config:
     SICKLIST_MAIL_SUBJECT_PREFIX = '[Sicklist]'
     SICKLIST_MAIL_SENDER = 'Sicklist Admin <admin@localhost.loc>'
 
-    SICKLIST_ADMIN = os.environ.get('SICKLIST_ADMIN')
+    SICKLIST_ADMIN = os.environ.get('SICKLIST_ADMIN') or 'admin@localhost.loc'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_RECORD_QUERIES = True
 
