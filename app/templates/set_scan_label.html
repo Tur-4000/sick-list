@@ -3,17 +3,23 @@
 
 {% block app_content %}
     <div class="row">
-        <div class="col-md-4">
-        </div>
-        <div class="col-md-4">
-            <h1>Отметка о сканировании карточки</h1>
-            {{ wtf.quick_form(form, button_map={'submit': 'success'}) }}
-            <br>
-            <a href="{{ url_for('main.all') }}" class="btn btn-primary">
-                <span class="glyphicon glyphicon-share" aria-hidden="true"></span>
-                Назад к списку больничных</a>
-        </div>
-        <div class="col-md-4">
-        </div>
+      <div class="col-md-4">
+      </div>
+      <div class="col-md-4">
+        <h1>Отметка о сканировании карточки</h1>
+        <p>Установить отметку о сканировании амбулаторной карты по больничному <b>№ {{ sicklist.sick_list_number }}</b></p>
+        <p><b>Больничный открыт:</b> {{ sicklist.start_date }}</p>
+        <p><b>Больничный закрыт:</b> {{ sicklist.end_date }}</p>
+        <p><b>Диагноз:</b> {{ sicklist.diacrisis.diagnoses }}</p>
+        <p><b>Пациент:</b> {{ sicklist.patient.last_name }} {{ sicklist.patient.first_name }} {{ sicklist.patient.middle_name }}</p>
+        <p><b>Лечащий врач:</b> {{ sicklist.doctor.last_name }} {{ sicklist.doctor.first_name }} {{ sicklist.doctor.middle_name }}</p>
+        {{ wtf.quick_form(form, button_map={'submit': 'success'}) }}
+        <br>
+        <a href="{{ url_for('main.all') }}" class="btn btn-primary">
+          <span class="glyphicon glyphicon-share" aria-hidden="true"></span>
+          Назад к списку больничных</a>
+      </div>
+      <div class="col-md-4">
+      </div>
     </div>
 {% endblock %}

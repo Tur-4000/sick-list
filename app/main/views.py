@@ -479,6 +479,7 @@ def edit_diacrisis(id):
 @permission_required(Permission.WRITE)
 def set_scan_label(id):
     form = SetScanLabelForm()
+    sicklist = Lists.query.filter_by(id=int(id)).first_or_404()
     if form.validate_on_submit():
         Lists.query.filter_by(id=int(id)).update({
             'scan_label': form.scan.data})
@@ -486,7 +487,6 @@ def set_scan_label(id):
         flash('Отметка о сканировании карточки установлена')
         return redirect(url_for('main.all'))
     elif request.method == 'GET':
-        sicklist = Lists.query.filter_by(id=int(id)).first_or_404()
         form.id.data = sicklist.id
         form.scan.data = sicklist.scan_label
-    return render_template('set_scan_label.html', form=form)
+    return render_template('set_scan_label.html', form=form, sicklist=sicklist)
