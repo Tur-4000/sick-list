@@ -1,5 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, HiddenField, SelectField, TextAreaField, BooleanField
+from wtforms import StringField, SubmitField, HiddenField, SelectField, \
+    TextAreaField, BooleanField
 from wtforms.fields.html5 import DateField
 from wtforms.validators import DataRequired, ValidationError, Length
 from ..models import Lists, Holiday, Patients, Employes, Diacrisis
@@ -120,3 +121,9 @@ class DiacrisisForm(FlaskForm):
         if field.data != self.diagnoses.data and \
                 Diacrisis.query.filter_by(diagnoses=field.data).first():
             raise ValidationError('Такой диагноз уже есть в базе')
+
+
+class SetScanLabelForm(FlaskForm):
+    id = HiddenField('id')
+    scan = BooleanField('Карточка отсканирована')
+    submit = SubmitField('Сохранить')

@@ -8,7 +8,7 @@ from .forms import AddEmployeForm, EditEmployeForm
 from .forms import AddHolidayForm, EditHolidayForm
 from .forms import AddPatientForm, EditPatientForm
 from .forms import CheckinForm, DiacrisisForm
-from .forms import CloseListForm, SicklistForm
+from .forms import CloseListForm, SicklistForm, SetScanLabelForm
 from .. import db
 from ..models import User, Patients, Lists, Employes, Holiday, is_work_day, \
     Diacrisis, Permission
@@ -464,7 +464,7 @@ def add_diacrisis():
 def edit_diacrisis(id):
     form = DiacrisisForm()
     if form.validate_on_submit():
-        Diacrisis.query.filter_by(id=id).update({
+        Diacrisis.query.filter_by(id=int(id)).update({
             'diagnoses': form.diagnoses.data})
         db.session.commit()
         flash('Диагноз изменён')
@@ -472,3 +472,21 @@ def edit_diacrisis(id):
     diacrisis = Diacrisis.query.filter_by(id=id).first_or_404()
     form.diagnoses.data = diacrisis.diagnoses
     return render_template('diacrisis.html', form=form)
+
+
+@main.route('/set_scan_label/<int:id>', methods=['GET', 'POST'])
+@login_required
+@permission_required(Permission.WRITE)
+def set_scan_label(id):
+    form = SetScanLabelForm()
+    if form.validate_on_submit():
+        Lists.query.filter_by(id=int(id)).update({
+            'scan_label': form.scan.data})
+        db.session.commit()
+        flash('Отметка о сканировании карточки установлена')
+        return redirect(url_for('main.all'))
+    elif request.method == 'GET':
+        sicklist = Lists.query.filter_by(id=int(id)).first_or_404()
+        form.id.data = sicklist.id
+        form.scan.data = sicklist.scan_label
+    return render_template('set_scan_label.html', form=form)

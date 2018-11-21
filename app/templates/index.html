@@ -117,10 +117,14 @@
             <td>
                 {% if list.end_date %}
                 {{ moment(list.end_date).format('L') }}
-                  <a href="#" title="необходимо отсканировать карточку">
-                    <h5><span class="glyphicon glyphicon-alert" aria-hidden="true"></span></h5>
-                  </a>
-                {% endif %}<br>
+                  {% if list.scan_label %}
+                    <h5><span class="glyphicon glyphicon-check" aria-hidden="true" style="color: green"></span></h5>
+                  {% else %}
+                    <a href="{{ url_for('main.set_scan_label', id=list.id) }}" title="необходимо отсканировать карточку">
+                      <h5><span class="glyphicon glyphicon-alert" aria-hidden="true" style="color: darkred"></span></h5>
+                    </a>
+                  {% endif %}
+                {% endif %}
             </td>
           </tr>
         {% endfor %}
@@ -137,7 +141,7 @@
         "columnDefs": [
           { "orderable": false, "targets": 0 }
         ],
-        "order": [[ 2, 'desc' ],],
+        "order": [[ 2, 'desc' ]],
         language: {
             url: "{{ url_for('static', filename='js/Russian.json') }}"
         }

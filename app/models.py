@@ -186,6 +186,7 @@ class Lists(db.Model):
     doctor = db.relationship('Employes', foreign_keys=[doctor_id])
     open_list_doctor = db.relationship('Employes',
                                        foreign_keys=[doctor_who_open_list])
+    scan_label = db.Column(db.Boolean, index=True, default=False)
 
     def __repr__(self):
         return '<Больничный лист № {}>'.format(self.sick_list_number)
