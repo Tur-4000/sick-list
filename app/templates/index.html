@@ -117,7 +117,10 @@
             <td>
                 {% if list.end_date %}
                 {{ moment(list.end_date).format('L') }}
-                {% endif %}
+                  <a href="#" title="необходимо отсканировать карточку">
+                    <h5><span class="glyphicon glyphicon-alert" aria-hidden="true"></span></h5>
+                  </a>
+                {% endif %}<br>
             </td>
           </tr>
         {% endfor %}
