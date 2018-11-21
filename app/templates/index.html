@@ -37,7 +37,7 @@
           <tr
             {% if list.end_date %}class="active"{% endif %}>
             <td>
-                {% if not list.end_date %}
+                {% if not list.end_date or current_user.can(Permission.ADMIN) %}
                 <a href="{{ url_for('main.edit_list', id=list.id) }}">
                     <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
                 </a>
