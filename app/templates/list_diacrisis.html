@@ -1,27 +1,34 @@
 {% extends "layout.html" %}
 
 {% block app_content %}
-    <h1>Список диагнозов</h1>
-    <p><a href="{{ url_for('main.add_diacrisis') }}">Добавить диагноз</a></p>
-    <table id="dataTable" class="table table-condensed table-striped">
-        <thead>
-            <tr>
-                <th></th>
-                <th>Диагноз</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for dia in diagnoses %}
-            <tr>
-                <td><a href="{{ url_for('main.edit_diacrisis', id=dia.id) }}">
-                        <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
-                    </a>
-                </td>
-                <td>{{ dia.diagnoses }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+  <h1>Список диагнозов</h1>
+  <p><a href="{{ url_for('main.add_diacrisis') }}">Добавить диагноз</a></p>
+  <table id="dataTable" class="table table-condensed table-striped">
+    <thead>
+      <tr>
+        <th></th>
+        <th>Диагноз</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for dia in diagnoses %}
+      <tr>
+        <td>
+          <a href="{{ url_for('main.edit_diacrisis', id=dia.id) }}" title="редактировать">
+              <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+          </a>
+          {% if current_user.can(Permission.ADMIN) %}
+            &nbsp;
+            <a href="{{ url_for('main.delete_diacrisis', id=dia.id) }}" title="удалить">
+              <span class="glyphicon glyphicon-trash" aria-hidden="true" style="color: red"></span>
+            </a>
+          {% endif %}
+        </td>
+        <td>{{ dia.diagnoses }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 {% endblock %}
 
 {% block scripts %}

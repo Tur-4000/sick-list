@@ -7,7 +7,7 @@ from . import main
 from .forms import AddEmployeForm, EditEmployeForm
 from .forms import AddHolidayForm, EditHolidayForm
 from .forms import AddPatientForm, EditPatientForm
-from .forms import CheckinForm, DiacrisisForm
+from .forms import CheckinForm, DiacrisisForm, EditDiacrisisForm
 from .forms import CloseListForm, SicklistForm, SetScanLabelForm, EditSicklistForm
 from .. import db
 from ..models import User, Patients, Lists, Employes, Holiday, is_work_day, \
@@ -466,14 +466,15 @@ def add_diacrisis():
         db.session.commit()
         flash('Диагноз "{}" добавлен'.format(form.diagnoses.data))
         return redirect(url_for('main.list_diacrisis'))
-    return render_template('diacrisis.html', form=form)
+    return render_template('diacrisis.html', form=form,
+                           title='Добавить диагноз')
 
 
 @main.route('/edit_diacrisis/<int:id>', methods=['GET', 'POST'])
 @login_required
 @permission_required(Permission.WRITE)
 def edit_diacrisis(id):
-    form = DiacrisisForm()
+    form = EditDiacrisisForm()
     if form.validate_on_submit():
         Diacrisis.query.filter_by(id=int(id)).update({
             'diagnoses': form.diagnoses.data})
@@ -481,8 +482,21 @@ def edit_diacrisis(id):
         flash('Диагноз изменён')
         return redirect(url_for('main.list_diacrisis'))
     diacrisis = Diacrisis.query.filter_by(id=id).first_or_404()
+    form.id.data = diacrisis.id
     form.diagnoses.data = diacrisis.diagnoses
-    return render_template('diacrisis.html', form=form)
+    return render_template('diacrisis.html', form=form,
+                           title='Редактировать диагноз')
+
+
+@main.route('/delete_diacrisis/<int:id>', methods=['GET', 'POST'])
+@login_required
+@admin_required
+def delete_diacrisis(id):
+    diacrisis = Diacrisis.query.filter_by(id=id).first_or_404()
+    db.session.delete(diacrisis)
+    db.session.commit()
+    flash(f'Диагноз "{diacrisis.diagnoses}" удалён.')
+    return redirect(url_for('main.list_diacrisis'))
 
 
 @main.route('/set_scan_label/<int:id>', methods=['GET', 'POST'])

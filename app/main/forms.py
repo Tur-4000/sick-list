@@ -142,12 +142,27 @@ class CheckinForm(FlaskForm):
 
 class DiacrisisForm(FlaskForm):
     id = HiddenField('id')
-    diagnoses = StringField('Диагноз', validators=[DataRequired(), Length(min=2, max=255)])
+    diagnoses = StringField('Диагноз', validators=[DataRequired(),
+                                                   Length(min=2, max=255)],
+                            render_kw={'placeholder': 'Диагноз'})
     submit = SubmitField('Сохранить')
 
     def validate_diagnoses(self, field):
-        if field.data != self.diagnoses.data and \
-                Diacrisis.query.filter_by(diagnoses=field.data).first():
+        if Diacrisis.query.filter_by(diagnoses=field.data).first():
+            raise ValidationError('Такой диагноз уже есть в базе')
+
+
+class EditDiacrisisForm(FlaskForm):
+    id = HiddenField('id')
+    diagnoses = StringField('Диагноз', validators=[DataRequired(),
+                                                   Length(min=2, max=255)],
+                            render_kw={'placeholder': 'Диагноз'})
+    submit = SubmitField('Сохранить')
+
+    def validate_diagnoses(self, field):
+        if Diacrisis.query.filter_by(diagnoses=field.data).first() and \
+                field.data != Diacrisis.query.filter_by(
+                    id=self.id.data).first().diagnoses:
             raise ValidationError('Такой диагноз уже есть в базе')
 
 

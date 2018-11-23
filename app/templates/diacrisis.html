@@ -6,7 +6,7 @@
         <div class="col-md-4">
         </div>
         <div class="col-md-4">
-            <h1>Добавить диагноз</h1>
+            <h1>{{ title }}</h1>
             {{ wtf.quick_form(form, button_map={'submit': 'success'}) }}
             <br><a href="{{ url_for('main.list_diacrisis') }}" class="btn btn-primary">
                 <span class="glyphicon glyphicon-share" aria-hidden="true"></span>
