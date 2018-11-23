@@ -289,6 +289,17 @@ def close_list(id):
     return render_template('close_list.html', form=form, sicklist=sicklist)
 
 
+@main.route('/delete_list/<int:id>', methods=['GET', 'POST'])
+@login_required
+@admin_required
+def delete_list(id):
+    sicklist = Lists.query.filter_by(id=id).first_or_404()
+    db.session.delete(sicklist)
+    db.session.commit()
+    flash(f'Больничный лист {sicklist.sick_list_number}  удалён.')
+    return redirect(url_for('main.all'))
+
+
 @main.route('/list_holidays')
 @login_required
 @permission_required(Permission.READ)
