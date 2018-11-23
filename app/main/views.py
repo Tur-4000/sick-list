@@ -7,8 +7,8 @@ from . import main
 from .forms import AddEmployeForm, EditEmployeForm
 from .forms import AddHolidayForm, EditHolidayForm
 from .forms import AddPatientForm, EditPatientForm
-from .forms import CheckinForm, DiacrisisForm, EditDiacrisisForm
-from .forms import CloseListForm, SicklistForm, SetScanLabelForm, EditSicklistForm
+from .forms import CheckinForm, AddDiacrisisForm, EditDiacrisisForm
+from .forms import CloseListForm, AddSicklistForm, SetScanLabelForm, EditSicklistForm
 from .. import db
 from ..models import User, Patients, Lists, Employes, Holiday, is_work_day, \
     Diacrisis, Permission
@@ -196,7 +196,7 @@ def edit_patient(id):
 @login_required
 @permission_required(Permission.WRITE)
 def add_sicklist():
-    form = SicklistForm()
+    form = AddSicklistForm()
     if form.validate_on_submit():
         first_checkin_date = form.start_date.data + timedelta(days=9)
         first_checkin_date = is_work_day(first_checkin_date, Holiday.list_holidays())
@@ -459,7 +459,7 @@ def list_diacrisis():
 @login_required
 @permission_required(Permission.WRITE)
 def add_diacrisis():
-    form = DiacrisisForm()
+    form = AddDiacrisisForm()
     if form.validate_on_submit():
         diagnoses = Diacrisis(diagnoses=form.diagnoses.data)
         db.session.add(diagnoses)

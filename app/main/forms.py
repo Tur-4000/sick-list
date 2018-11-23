@@ -67,32 +67,15 @@ class SicklistForm(FlaskForm):
         self.diagnoses.choices = [(dia.id, dia.diagnoses)
                                   for dia in Diacrisis.query.order_by('diagnoses')]
 
+
+class AddSicklistForm(SicklistForm, FlaskForm):
+
     def validate_sick_list_number(self, field):
         if Lists.query.filter_by(sick_list_number=field.data).first():
             raise ValidationError('Больничный с таким номером уже есть в базе')
 
 
-class EditSicklistForm(FlaskForm):
-    id = HiddenField('id')
-    sick_list_number = StringField('Номер больничного', validators=[DataRequired()],
-                                   render_kw={'placeholder': 'Номер больничного'})
-    start_date = DateField('Дата открытия', format='%Y-%m-%d', validators=[DataRequired()])
-    patient = SelectField('Пациент', coerce=int)
-    diagnoses = SelectField('Диагноз', coerce=int)
-    doctor = SelectField('Лечащий врач', coerce=int)
-    status = SelectField('Статус', choices=[('open', 'Открыт'), ('relocated', 'перемещён')], coerce=str)
-    status_note = TextAreaField('Примечание',
-                                validators=[Length(min=0, max=255)])
-    submit = SubmitField('Сохранить')
-
-    def __init__(self, *args, **kwargs):
-        super(EditSicklistForm, self).__init__(*args, **kwargs)
-        self.patient.choices = [(p.id, " ".join([p.last_name, p.first_name, p.middle_name]))
-                                for p in Patients.query.order_by('last_name')]
-        self.doctor.choices = [(e.id, " ".join([e.last_name, e.first_name, e.middle_name]))
-                               for e in Employes.query.filter_by(dismissed=False).order_by('last_name')]
-        self.diagnoses.choices = [(dia.id, dia.diagnoses)
-                                  for dia in Diacrisis.query.order_by('diagnoses')]
+class EditSicklistForm(SicklistForm, FlaskForm):
 
     def validate_sick_list_number(self, field):
         if Lists.query.filter_by(sick_list_number=field.data).first() \
@@ -147,23 +130,21 @@ class DiacrisisForm(FlaskForm):
                             render_kw={'placeholder': 'Диагноз'})
     submit = SubmitField('Сохранить')
 
+
+class AddDiacrisisForm(DiacrisisForm, FlaskForm):
+
     def validate_diagnoses(self, field):
         if Diacrisis.query.filter_by(diagnoses=field.data).first():
-            raise ValidationError('Такой диагноз уже есть в базе')
+            raise ValidationError('Такой диагноз уже есть в справочнике.')
 
 
-class EditDiacrisisForm(FlaskForm):
-    id = HiddenField('id')
-    diagnoses = StringField('Диагноз', validators=[DataRequired(),
-                                                   Length(min=2, max=255)],
-                            render_kw={'placeholder': 'Диагноз'})
-    submit = SubmitField('Сохранить')
+class EditDiacrisisForm(DiacrisisForm, FlaskForm):
 
     def validate_diagnoses(self, field):
         if Diacrisis.query.filter_by(diagnoses=field.data).first() and \
                 field.data != Diacrisis.query.filter_by(
                     id=self.id.data).first().diagnoses:
-            raise ValidationError('Такой диагноз уже есть в базе')
+            raise ValidationError('Такой диагноз уже есть в справочнике.')
 
 
 class SetScanLabelForm(FlaskForm):
