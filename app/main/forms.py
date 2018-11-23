@@ -95,8 +95,9 @@ class EditSicklistForm(FlaskForm):
                                   for dia in Diacrisis.query.order_by('diagnoses')]
 
     def validate_sick_list_number(self, field):
-        if field.data != Lists.query.filter_by(id=self.id.data).first().sick_list_number \
-                and Lists.query.filter_by(sick_list_number=field.data).first():
+        if Lists.query.filter_by(sick_list_number=field.data).first() \
+                and field.data != Lists.query.filter_by(
+                        id=self.id.data).first().sick_list_number:
             raise ValidationError('Больничный с таким номером уже есть в базе')
 
 
