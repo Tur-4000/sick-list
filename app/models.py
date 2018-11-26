@@ -164,6 +164,8 @@ def is_work_day(checkinday, holiday):
 
 
 class Lists(db.Model):
+    """Модель больничных листов
+    """
     id = db.Column(db.Integer, primary_key=True)
     sick_list_number = db.Column(db.String(32), index=True, unique=True)
     start_date = db.Column(db.Date)
@@ -192,29 +194,40 @@ class Lists(db.Model):
         return '<Больничный лист № {}>'.format(self.sick_list_number)
 
     @staticmethod
-    def on_changed_start_date(target, value, oldvalue, initiator):
-        target.first_checkin_date = is_work_day((value + timedelta(days=9)),
-                                                Holiday.list_holidays())
-        # second_checkin_date = target.first_checkin_date + timedelta(days=10)
-        # target.second_checkin_date = is_work_day(second_checkin_date,
-        #                                          Holiday.list_holidays())
-        # vkk_date = target.second_checkin_date + timedelta(days=10)
-        # target.vkk_date = is_work_day(vkk_date, Holiday.list_holidays())
-#
-#     @staticmethod
-#     def on_changed_first_checkin_fact():
-#         pass
-#
-#     @staticmethod
-#     def on_changed_second_checkin_fact():
-#         pass
-#
-#     @staticmethod
-#     def on_changed_vkk_fact():
-#         pass
+    def on_set_start_date(target, value, oldvalue, initiator):
+        """Расчёт плановых дат совместных осмотров
+        """
+        target.first_checkin = is_work_day((value + timedelta(days=9)),
+                                           Holiday.list_holidays())
+        second_checkin_date = target.first_checkin + timedelta(days=10)
+        target.second_checkin = is_work_day(second_checkin_date,
+                                            Holiday.list_holidays())
+        vkk_date = target.second_checkin + timedelta(days=10)
+        target.vkk = is_work_day(vkk_date, Holiday.list_holidays())
+
+    # @staticmethod
+    # def on_changed_first_checkin_fact(target, value, oldvalue, initiator):
+    #     """Расчёт плановых дат совместных осмотров при установке фактической
+    #        даты первого совместного осмотра
+    #     """
+    #     second_checkin_date = value + timedelta(days=10)
+    #     target.second_checkin = is_work_day(second_checkin_date,
+    #                                         Holiday.list_holidays())
+    #     vkk_date = target.second_checkin + timedelta(days=10)
+    #     target.vkk = is_work_day(vkk_date, Holiday.list_holidays())
+    #
+    # @staticmethod
+    # def on_changed_second_checkin_fact(target, value, oldvalue, initiator):
+    #     """Расчёт плановых дат совместных осмотров при установке фактической
+    #        даты второго совместного осмотра
+    #     """
+    #     vkk_date = value + timedelta(days=10)
+    #     target.vkk = is_work_day(vkk_date, Holiday.list_holidays())
 
 
-db.event.listen(Lists.start_date, 'set', Lists.on_changed_start_date)
+db.event.listen(Lists.start_date, 'set', Lists.on_set_start_date)
+# db.event.listen(Lists.first_checkin_fact, 'set', Lists.on_changed_first_checkin_fact)
+# db.event.listen(Lists.second_checkin_fact, 'set', Lists.on_changed_second_checkin_fact)
 
 
 class Holiday(db.Model):

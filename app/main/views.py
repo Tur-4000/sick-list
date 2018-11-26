@@ -198,18 +198,9 @@ def edit_patient(id):
 def add_sicklist():
     form = AddSicklistForm()
     if form.validate_on_submit():
-        # first_checkin_date = form.start_date.data + timedelta(days=9)
-        # first_checkin_date = is_work_day(first_checkin_date, Holiday.list_holidays())
-        # second_checkin_date = first_checkin_date + timedelta(days=10)
-        # second_checkin_date = is_work_day(second_checkin_date, Holiday.list_holidays())
-        # vkk_date = second_checkin_date + timedelta(days=10)
-        # vkk_date = is_work_day(vkk_date, Holiday.list_holidays())
         sicklist = Lists(sick_list_number=form.sick_list_number.data,
                          start_date=form.start_date.data,
                          doctor_who_open_list=request.form['doctor'],
-                         # first_checkin=first_checkin_date,
-                         # second_checkin=second_checkin_date,
-                         # vkk=vkk_date,
                          status=request.form['status'],
                          diagnoses_id=request.form['diagnoses'],
                          patient_id=request.form['patient'],
@@ -255,7 +246,8 @@ def edit_list(id):
                                 'doctor_id': request.form['doctor'],
                                 'first_checkin': first_checkin_date,
                                 'second_checkin': second_checkin_date,
-                                'vkk': vkk_date})
+                                'vkk': vkk_date
+                                })
         db.session.commit()
         flash('Изменения сохранены')
         return redirect(url_for('main.all'))
@@ -380,14 +372,16 @@ def add_checkin(id, type_checkin):
                             {'first_checkin_fact': form.checkin_date.data,
                              'first_checkin_note': form.checkin_note.data,
                              'second_checkin': second_checkin_date,
-                             'vkk': vkk_date})
+                             'vkk': vkk_date
+                             })
         elif type_checkin == 'second':
             vkk_date = form.checkin_date.data + timedelta(days=10)
             vkk_date = is_work_day(vkk_date, Holiday.list_holidays())
             Lists.query.filter_by(id=int(form.id.data)).update(
                             {'second_checkin_fact': form.checkin_date.data,
                              'second_checkin_note': form.checkin_note.data,
-                             'vkk': vkk_date})
+                             'vkk': vkk_date
+                             })
         elif type_checkin == 'vkk':
             Lists.query.filter_by(id=int(form.id.data)).update(
                             {'vkk_checkin_fact': form.checkin_date.data,
@@ -417,14 +411,16 @@ def edit_checkin(id, type_checkin):
                             {'first_checkin_fact': form.checkin_date.data,
                              'first_checkin_note': form.checkin_note.data,
                              'second_checkin': second_checkin_date,
-                             'vkk': vkk_date})
+                             'vkk': vkk_date
+                             })
         elif type_checkin == 'second':
             vkk_date = form.checkin_date.data + timedelta(days=10)
             vkk_date = is_work_day(vkk_date, Holiday.list_holidays())
             Lists.query.filter_by(id=int(form.id.data)).update(
                             {'second_checkin_fact': form.checkin_date.data,
                              'second_checkin_note': form.checkin_note.data,
-                             'vkk': vkk_date})
+                             'vkk': vkk_date
+                             })
         elif type_checkin == 'vkk':
             Lists.query.filter_by(id=int(form.id.data)).update(
                             {'vkk_checkin_fact': form.checkin_date.data,
