@@ -198,18 +198,18 @@ def edit_patient(id):
 def add_sicklist():
     form = AddSicklistForm()
     if form.validate_on_submit():
-        first_checkin_date = form.start_date.data + timedelta(days=9)
-        first_checkin_date = is_work_day(first_checkin_date, Holiday.list_holidays())
-        second_checkin_date = first_checkin_date + timedelta(days=10)
-        second_checkin_date = is_work_day(second_checkin_date, Holiday.list_holidays())
-        vkk_date = second_checkin_date + timedelta(days=10)
-        vkk_date = is_work_day(vkk_date, Holiday.list_holidays())
+        # first_checkin_date = form.start_date.data + timedelta(days=9)
+        # first_checkin_date = is_work_day(first_checkin_date, Holiday.list_holidays())
+        # second_checkin_date = first_checkin_date + timedelta(days=10)
+        # second_checkin_date = is_work_day(second_checkin_date, Holiday.list_holidays())
+        # vkk_date = second_checkin_date + timedelta(days=10)
+        # vkk_date = is_work_day(vkk_date, Holiday.list_holidays())
         sicklist = Lists(sick_list_number=form.sick_list_number.data,
                          start_date=form.start_date.data,
                          doctor_who_open_list=request.form['doctor'],
-                         first_checkin=first_checkin_date,
-                         second_checkin=second_checkin_date,
-                         vkk=vkk_date,
+                         # first_checkin=first_checkin_date,
+                         # second_checkin=second_checkin_date,
+                         # vkk=vkk_date,
                          status=request.form['status'],
                          diagnoses_id=request.form['diagnoses'],
                          patient_id=request.form['patient'],
@@ -218,7 +218,9 @@ def add_sicklist():
         db.session.commit()
         flash('Больничный лист № {} добавлен'.format(form.sick_list_number.data))
         return redirect(url_for('main.all'))
-    return render_template('add_sicklist.html', title='Добавление нового больничного листа', form=form)
+    return render_template('add_sicklist.html',
+                           title='Добавление нового больничного листа',
+                           form=form)
 
 
 @main.route('/edit_list/<int:id>', methods=['GET', 'POST'])
