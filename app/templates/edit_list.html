@@ -22,3 +22,18 @@
         </div>
     </div>
 {% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+  <script>
+    $(document).ready(function() {
+      $('#patient').select2();
+    });
+    $(document).ready(function() {
+      $('#diagnoses').select2();
+    });
+    $(document).ready(function() {
+      $('#doctor').select2();
+    });
+  </script>
+{% endblock %}
