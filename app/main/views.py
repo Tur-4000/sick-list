@@ -388,8 +388,8 @@ def add_checkin(id, type_checkin):
                              'vkk': vkk_date})
         elif type_checkin == 'vkk':
             Lists.query.filter_by(id=int(form.id.data)).update(
-                            {'vkk_checkin_fact': form.checkin_date.data,
-                             'vkk_checkin_note': form.checkin_note.data})
+                            {'vkk_fact': form.checkin_date.data,
+                             'vkk_note': form.checkin_note.data})
         db.session.commit()
         flash('Совместный осмотр {} добавлен'.format(form.checkin_date.data))
         return redirect(url_for('main.index'))
