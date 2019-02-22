@@ -95,7 +95,7 @@
 
             <td {% if today == list.vkk %} class="success" {% endif %}>
               {{ moment(list.vkk).format('L') }}<br><hr style="margin: 5px">
-              {% if not list.vkk_checkin_fact %}
+              {% if not list.vkk_fact %}
               <a href="{{ url_for('main.add_checkin', id=list.id, type_checkin='vkk') }}">
                   <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
               </a>
