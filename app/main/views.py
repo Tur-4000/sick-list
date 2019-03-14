@@ -21,7 +21,7 @@ def before_request():
         current_user.last_visit = datetime.utcnow()
         db.session.commit()
 
-#TODO: оптимизировать запрос
+
 @main.route('/', methods=['GET', 'POST'])
 @main.route('/index', methods=['GET', 'POST'])
 @login_required
@@ -37,19 +37,6 @@ def index():
                 db.and_(Lists.vkk == today,
                         Lists.vkk_fact == None))).\
         order_by(Lists.start_date.desc()).all()
-
-    # sicklists = Lists.query.filter_by(
-    #     status='open',
-    #     first_checkin=today,
-    #     first_checkin_fact=None).order_by(Lists.start_date.desc()).all()
-    # sicklists += Lists.query.filter_by(
-    #     status='open',
-    #     second_checkin=today,
-    #     second_checkin_fact=None).order_by(Lists.start_date.desc()).all()
-    # sicklists += Lists.query.filter_by(
-    #     status='open',
-    #     vkk=today,
-    #     vkk_fact=None).order_by(Lists.start_date.desc()).all()
     return render_template('index.html',
                            title='Главная',
                            header='Совместные осмотры сегодня',
