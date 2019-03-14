@@ -151,3 +151,8 @@ class SetScanLabelForm(FlaskForm):
     id = HiddenField('id')
     scan = BooleanField('Карточка отсканирована')
     submit = SubmitField('Сохранить')
+
+
+class DelCheckinForm(FlaskForm):
+    id = HiddenField('id')
+    submit = SubmitField('Удалить')
