@@ -447,6 +447,20 @@ def edit_checkin(id, type_checkin):
                            title='Добавить совместный осмотр')
 
 
+#TODO: дописать удаление "фактического совместного осмотра"
+
+@main.route('/del_checkin/<int:id>/<type_checkin>', methods=['GET', 'POST'])
+@login_required
+@permission_required(Permission.ADMIN)
+def del_checkin(id, type_checkin):
+    pass
+    return render_template('del_checkin.html',
+                           id=id,
+                           checkin_type=type_checkin,
+                           title='Удалить совместный осмотр')
+
+
+
 @main.route('/list_diacrisis')
 @login_required
 @permission_required(Permission.READ)
