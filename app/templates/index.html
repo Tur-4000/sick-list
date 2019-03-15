@@ -95,13 +95,13 @@
 
             <td {% if today == list.vkk %} class="success" {% endif %}>
               {{ moment(list.vkk).format('L') }}<br><hr style="margin: 5px">
-              {% if not list.vkk_checkin_fact %}
+              {% if not list.vkk_fact %}
               <a href="{{ url_for('main.add_checkin', id=list.id, type_checkin='vkk') }}">
                   <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
               </a>
               {% else %}
               <a href="{{ url_for('main.edit_checkin', id=list.id, type_checkin='vkk') }}">
-                  {{ moment(list.vkk_checkin_fact).format('L') }}</a>
+                  {{ moment(list.vkk_fact).format('L') }}</a>
               {% endif %}
             </td>
 

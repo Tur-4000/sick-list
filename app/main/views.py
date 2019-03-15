@@ -28,19 +28,19 @@ def before_request():
 @permission_required(Permission.READ)
 def index():
     today = date.today()
-    sicklists = Lists.query.filter_by(
-        status='open',
-        first_checkin=today,
-        first_checkin_fact=None).order_by(Lists.start_date.desc()).all()
-    sicklists += Lists.query.filter_by(
-        status='open',
-        second_checkin=today,
-        second_checkin_fact=None).order_by(Lists.start_date.desc()).all()
-    sicklists += Lists.query.filter_by(
-        status='open',
-        vkk=today,
-        vkk_fact=None).order_by(Lists.start_date.desc()).all()
-    return render_template('index.html', title='Главная', header='Совместные осмотры сегодня', sicklists=sicklists,
+    sicklists = Lists.query.filter_by(status='open').\
+        filter(db.or_(
+                db.and_(Lists.first_checkin == today,
+                        Lists.first_checkin_fact == None),
+                db.and_(Lists.second_checkin == today,
+                        Lists.second_checkin_fact == None),
+                db.and_(Lists.vkk == today,
+                        Lists.vkk_fact == None))).\
+        order_by(Lists.start_date.desc()).all()
+    return render_template('index.html',
+                           title='Главная',
+                           header='Совместные осмотры сегодня',
+                           sicklists=sicklists,
                            today=today)
 
 
@@ -384,8 +384,8 @@ def add_checkin(id, type_checkin):
                              })
         elif type_checkin == 'vkk':
             Lists.query.filter_by(id=int(form.id.data)).update(
-                            {'vkk_checkin_fact': form.checkin_date.data,
-                             'vkk_checkin_note': form.checkin_note.data})
+                            {'vkk_fact': form.checkin_date.data,
+                             'vkk_note': form.checkin_note.data})
         db.session.commit()
         flash('Совместный осмотр {} добавлен'.format(form.checkin_date.data))
         return redirect(url_for('main.index'))
