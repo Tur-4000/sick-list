@@ -2,13 +2,17 @@
 {% import 'bootstrap/wtf.html' as wtf %}
 
 {% block app_content %}
-    <h1>Добавить пользователя</h1>
+
     <div class="row">
-        <div class="col-md-4">
-            {{ wtf.quick_form(form, button_map={'submit': 'success'}) }}
-            <br><a href="{{ url_for('auth.list_users') }}" class="btn btn-primary">
-                    <span class="glyphicon glyphicon-share" aria-hidden="true"></span> 
-                    Назад к списку пользователей</a>
-        </div>
+      <div class="col-md-4"></div>
+      <div class="col-md-4">
+        <h1>Добавить пользователя</h1>
+        {{ wtf.quick_form(form, button_map={'submit': 'success'}) }}
+        <br><a href="{{ url_for('auth.list_users') }}" class="btn btn-primary">
+                <span class="glyphicon glyphicon-share" aria-hidden="true"></span>
+                Назад к списку пользователей</a>
+      </div>
+      <div class="col-md-4"></div>
     </div>
+
 {% endblock %}

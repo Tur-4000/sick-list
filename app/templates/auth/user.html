@@ -2,40 +2,48 @@
 
 
 {% block app_content %}
-    <h1>Пользователь: {{ user.username }}</h1>
-    {% if user.last_visit %}<p>Последне посещение: {{ moment(user.last_visit).format('LLL') }}</p>{% endif %}
-    <hr>
-    <p><b>email:</b> {{ user.email }}</p>
-    <p>
-      {% if employe %}
-        <b>Сотрудник:</b> {{ employe.last_name + " " +
-                             employe.first_name + " " +
-                             employe.middle_name }}
-      {% endif %}
-    </p>
-    <p><b>Роль:</b> {{ user.role.name }}</p>
   <div class="row">
-    <div class="col-md-2">
-      <a href="{{ url_for('auth.list_users') }}" class="btn btn-primary">
-          <span class="glyphicon glyphicon-share" aria-hidden="true"></span>
-          Назад к списку пользователей
-      </a>
-    </div>
-    {% if current_user.can(Permission.ADMIN) %}
-      <div class="col-md-2 col-md-offset-1">
-        <a href="{{ url_for('auth.edit_profile', id=user.id) }}" class="btn btn-primary">
-            <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
-            Редактировать профиль
-        </a>
-      </div>
-      {% if not user.can(Permission.ADMIN) %}
-        <div class="col-md-2 col-md-offset-1">
-          <a href="{{ url_for('auth.del_user', id=user.id) }}" class="btn btn-danger">
-              <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
-              Удалить пользователя
+    <div class="col-md-3"></div>
+    <div class="col-md-6">
+      <h1>Пользователь: {{ user.username }}</h1>
+      {% if user.last_visit %}<p>Последне посещение: {{ moment(user.last_visit).format('LLL') }}</p>{% endif %}
+      <hr>
+      <p><b>email:</b> {{ user.email }}</p>
+      <p>
+        {% if employe %}
+          <b>Сотрудник:</b> {{ employe.last_name + " " +
+                               employe.first_name + " " +
+                               employe.middle_name }}
+        {% endif %}
+      </p>
+      <p><b>Роль:</b> {{ user.role.name }}</p>
+
+      <div class="row">
+        <div class="btn-group" role="group">
+          <a href="{{ url_for('auth.list_users') }}" class="btn btn-primary">
+              <span class="glyphicon glyphicon-share" aria-hidden="true"></span>
+              Назад к списку пользователей
           </a>
+          {% if current_user.can(Permission.ADMIN) %}
+
+              <a href="{{ url_for('auth.edit_profile', id=user.id) }}" class="btn btn-primary">
+                  <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+                  Редактировать профиль
+              </a>
         </div>
-      {% endif %}
-    {% endif %}
+            {% if not user.can(Permission.ADMIN) %}
+
+                <a href="{{ url_for('auth.del_user', id=user.id) }}" class="btn btn-danger pull-right">
+                    <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                    Удалить пользователя
+                </a>
+
+            {% endif %}
+          {% endif %}
+
+      </div>
+    </div>
+    <div class="col-md-3"></div>
   </div>
+
 {% endblock %}
