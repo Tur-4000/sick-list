@@ -483,14 +483,21 @@ def edit_checkin(id, type_checkin):
 @permission_required(Permission.ADMIN)
 def del_checkin(id, type_checkin):
     form = DelCheckinForm()
+    sicklist = Lists.query.filter_by(id=int(id)).first_or_404()
     if form.validate_on_submit():
         if type_checkin == 'first':
+            second_checkin_date = calc_checkin_date(sicklist.first_checkin)
+            vkk_date = calc_checkin_date(second_checkin_date)
             Lists.query.filter_by(id=int(form.id.data)).update(
-                {'first_checkin_fact': None,
+                {'second_checkin': second_checkin_date,
+                 'vkk': vkk_date,
+                 'first_checkin_fact': None,
                  'first_checkin_note': None})
         elif type_checkin == 'second':
+            vkk_date = calc_checkin_date(sicklist.second_checkin)
             Lists.query.filter_by(id=int(form.id.data)).update(
-                {'second_checkin_fact': None,
+                {'vkk': vkk_date,
+                 'second_checkin_fact': None,
                  'second_checkin_note': None})
         elif type_checkin == 'vkk':
             Lists.query.filter_by(id=int(form.id.data)).update(
@@ -499,12 +506,12 @@ def del_checkin(id, type_checkin):
         db.session.commit()
         flash('Запись о совместном осмотре удалена')
         return redirect(url_for('main.all'))
-    checkins_list = Lists.query.filter_by(id=int(id)).first_or_404()
-    form.id.data = checkins_list.id
+
+    form.id.data = sicklist.id
     return render_template('del_checkin.html',
                            id=id,
                            form=form,
-                           sicklist=checkins_list,
+                           sicklist=sicklist,
                            checkin_type=type_checkin)
 
 
