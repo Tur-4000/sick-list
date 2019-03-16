@@ -7,7 +7,7 @@ from . import main
 from .forms import AddEmployeForm, EditEmployeForm
 from .forms import AddHolidayForm, EditHolidayForm
 from .forms import AddPatientForm, EditPatientForm
-from .forms import CheckinForm, AddDiacrisisForm, EditDiacrisisForm
+from .forms import CheckinForm, AddDiacrisisForm, EditDiacrisisForm, DelCheckinForm
 from .forms import CloseListForm, AddSicklistForm, SetScanLabelForm, EditSicklistForm
 from .. import db
 from ..models import User, Patients, Lists, Employes, Holiday, is_work_day, \
@@ -50,7 +50,10 @@ def index():
 def all():
     today = date.today()
     sicklists = Lists.query.order_by(Lists.start_date.desc()).all()
-    return render_template('index.html', title='Все б/л', header='Список больничных листов', sicklists=sicklists,
+    return render_template('index.html',
+                           title='Все б/л',
+                           header='Список больничных листов',
+                           sicklists=sicklists,
                            today=today)
 
 
@@ -417,10 +420,12 @@ def add_checkin(id, type_checkin):
         flash('Совместный осмотр {} добавлен'.format(form.checkin_date.data))
         return redirect(url_for('main.index'))
     elif request.method == 'GET':
+        checkins_list = Lists.query.filter_by(id=int(id)).first_or_404()
         form.id.data = id
-    return render_template('checkin.html',
+    return render_template('add_checkin.html',
                            form=form,
-                           title='Добавить совместный осмотр')
+                           sicklist=checkins_list,
+                           type_checkin=type_checkin)
 
 
 @main.route('/edit_checkin/<int:id>/<type_checkin>', methods=['GET', 'POST'])
@@ -464,9 +469,50 @@ def edit_checkin(id, type_checkin):
         elif type_checkin == 'vkk':
             form.checkin_date.data = checkins_list.vkk_fact
             form.checkin_note.data = checkins_list.vkk_note
-    return render_template('checkin.html',
+    return render_template('edit_checkin.html',
                            form=form,
-                           title='Добавить совместный осмотр')
+                           id=id,
+                           checkin_type=type_checkin,
+                           sicklist=checkins_list)
+
+
+#TODO: дописать удаление "фактического совместного осмотра"
+
+@main.route('/del_checkin/<int:id>/<type_checkin>', methods=['GET', 'POST'])
+@login_required
+@permission_required(Permission.ADMIN)
+def del_checkin(id, type_checkin):
+    form = DelCheckinForm()
+    sicklist = Lists.query.filter_by(id=int(id)).first_or_404()
+    if form.validate_on_submit():
+        if type_checkin == 'first':
+            second_checkin_date = calc_checkin_date(sicklist.first_checkin)
+            vkk_date = calc_checkin_date(second_checkin_date)
+            Lists.query.filter_by(id=int(form.id.data)).update(
+                {'second_checkin': second_checkin_date,
+                 'vkk': vkk_date,
+                 'first_checkin_fact': None,
+                 'first_checkin_note': None})
+        elif type_checkin == 'second':
+            vkk_date = calc_checkin_date(sicklist.second_checkin)
+            Lists.query.filter_by(id=int(form.id.data)).update(
+                {'vkk': vkk_date,
+                 'second_checkin_fact': None,
+                 'second_checkin_note': None})
+        elif type_checkin == 'vkk':
+            Lists.query.filter_by(id=int(form.id.data)).update(
+                {'vkk_fact': None,
+                 'vkk_note': None})
+        db.session.commit()
+        flash('Запись о совместном осмотре удалена')
+        return redirect(url_for('main.all'))
+
+    form.id.data = sicklist.id
+    return render_template('del_checkin.html',
+                           id=id,
+                           form=form,
+                           sicklist=sicklist,
+                           checkin_type=type_checkin)
 
 
 @main.route('/list_diacrisis')
