@@ -5,18 +5,24 @@
     <div class="row">
         <div class="col-md-3">
         </div>
-        <div class="col-md-6">
+        <div class="col-md-6 col-sm-12 col-xs-12">
             <h1>Редактировать больничный лист</h1>
             {{ wtf.quick_form(form, button_map={'submit': 'success'}) }}
 
             <br>
-            <a href="{{ url_for('main.all') }}" class="btn btn-primary">
-                <span class="glyphicon glyphicon-share" aria-hidden="true"></span> 
+          <div class="row">
+            <div class="col-md-6 col-sm-6 col-xs-6">
+              <a href="{{ url_for('main.all') }}" class="btn btn-primary">
+                <span class="glyphicon glyphicon-share" aria-hidden="true"></span>
                 Назад к списку больничных листов</a>
-            <a href="{{ url_for('main.close_list', id=sicklist.id) }}" class="btn btn-warning">
-                <span class="glyphicon glyphicon-lock" aria-hidden="true"></span> 
+            </div>
+            <div class="col-md-6 col-sm-6 col-xs-6">
+              <a href="{{ url_for('main.close_list', id=sicklist.id) }}" class="btn btn-warning pull-right">
+                <span class="glyphicon glyphicon-lock" aria-hidden="true"></span>
                 Закрыть больничный лист
             </a>
+            </div>
+          </div>
         </div>
         <div class="col-md-3">
         </div>
