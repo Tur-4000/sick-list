@@ -195,17 +195,6 @@ def edit_patient(id):
     return render_template('edit_patient.html', form=form, patient=patient)
 
 
-# def calc_first_checkin_date(sicklist_start_date):
-#     """
-#     Расчёт даты первого совместного осмотра
-#     :param sicklist_start_date:
-#     :return first_checkin_date:
-#     """
-#     first_checkin_date = sicklist_start_date + timedelta(days=9)
-#     first_checkin_date = is_work_day(first_checkin_date, Holiday.list_holidays())
-#     return first_checkin_date
-
-
 def calc_checkin_date(start_date, tdelta=10):
     """
     Расчёт дат совместных осмотров
