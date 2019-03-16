@@ -484,14 +484,28 @@ def edit_checkin(id, type_checkin):
 def del_checkin(id, type_checkin):
     form = DelCheckinForm()
     if form.validate_on_submit():
-        pass
+        if type_checkin == 'first':
+            Lists.query.filter_by(id=int(form.id.data)).update(
+                {'first_checkin_fact': None,
+                 'first_checkin_note': None})
+        elif type_checkin == 'second':
+            Lists.query.filter_by(id=int(form.id.data)).update(
+                {'second_checkin_fact': None,
+                 'second_checkin_note': None})
+        elif type_checkin == 'vkk':
+            Lists.query.filter_by(id=int(form.id.data)).update(
+                {'vkk_fact': None,
+                 'vkk_note': None})
+        db.session.commit()
+        flash('Запись о совместном осмотре удалена')
+        return redirect(url_for('main.all'))
     checkins_list = Lists.query.filter_by(id=int(id)).first_or_404()
+    form.id.data = checkins_list.id
     return render_template('del_checkin.html',
                            id=id,
                            form=form,
                            sicklist=checkins_list,
                            checkin_type=type_checkin)
-
 
 
 @main.route('/list_diacrisis')
