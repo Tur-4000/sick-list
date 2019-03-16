@@ -195,24 +195,25 @@ def edit_patient(id):
     return render_template('edit_patient.html', form=form, patient=patient)
 
 
-def calc_first_checkin_date(sicklist_start_date):
-    """
-    Расчёт даты первого совместного осмотра
-    :param sicklist_start_date:
-    :return first_checkin_date:
-    """
-    first_checkin_date = sicklist_start_date + timedelta(days=9)
-    first_checkin_date = is_work_day(first_checkin_date, Holiday.list_holidays())
-    return first_checkin_date
+# def calc_first_checkin_date(sicklist_start_date):
+#     """
+#     Расчёт даты первого совместного осмотра
+#     :param sicklist_start_date:
+#     :return first_checkin_date:
+#     """
+#     first_checkin_date = sicklist_start_date + timedelta(days=9)
+#     first_checkin_date = is_work_day(first_checkin_date, Holiday.list_holidays())
+#     return first_checkin_date
 
 
-def calc_checkin_date(prev_date):
+def calc_checkin_date(start_date, tdelta=10):
     """
-    Расчёт дат второго и третьего совместных осмотров
-    :param prev_date:
+    Расчёт дат совместных осмотров
+    :param start_date: дата начала отсчёта
+    :param tdelta: количество прибавляемых дней. Для первого СО необходимо устанавливать 9
     :return checkin_date:
     """
-    checkin_date = prev_date + timedelta(days=10)
+    checkin_date = start_date + timedelta(days=tdelta)
     checkin_date = is_work_day(checkin_date, Holiday.list_holidays())
     return checkin_date
 
@@ -223,7 +224,7 @@ def calc_checkin_date(prev_date):
 def add_sicklist():
     form = AddSicklistForm()
     if form.validate_on_submit():
-        first_checkin_date = calc_first_checkin_date(form.start_date.data)
+        first_checkin_date = calc_checkin_date(form.start_date.data, 9)
         second_checkin_date = calc_checkin_date(first_checkin_date)
         vkk_date = calc_checkin_date(second_checkin_date)
         sicklist = Lists(sick_list_number=form.sick_list_number.data,
@@ -261,7 +262,7 @@ def edit_list(id):
             if sicklist.first_checkin_fact:
                 second_checkin_date = calc_checkin_date(sicklist.first_checkin_fact)
             else:
-                first_checkin_date = calc_first_checkin_date(form.start_date.data)
+                first_checkin_date = calc_checkin_date(form.start_date.data, 9)
             if sicklist.second_checkin_fact:
                 vkk_date = calc_checkin_date(sicklist.second_checkin_fact)
             else:
