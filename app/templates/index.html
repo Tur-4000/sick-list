@@ -37,11 +37,11 @@
           <tr
             {% if list.end_date %}class="active"{% endif %}>
             <td>
-              {% if not list.end_date %}
+{#              {% if not list.end_date %}#}
               <a href="{{ url_for('main.edit_list', id=list.id) }}" title="редактировать">
                   <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
               </a><br><br>
-              {% endif %}
+{#              {% endif %}#}
               {% if current_user.can(Permission.ADMIN) %}
                 <a href="{{ url_for('main.delete_list', id=list.id) }}" title="удалить">
                   <span class="glyphicon glyphicon-trash" aria-hidden="true" style="color: red"></span>
